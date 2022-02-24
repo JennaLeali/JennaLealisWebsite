@@ -1,0 +1,103 @@
+---
+title: InClass2/21
+author: R package build
+date: '2022-02-21'
+slug: inclass2-21
+categories: []
+tags: []
+---
+## Cat Lovers
+```{r}
+library(tidyverse)
+cat_lovers <- "https://raw.githubusercontent.com/dearbharat/tidyverse/main/cat-lovers.csv"
+cat_lovers <- read_csv(cat_lovers)
+```
+### Sumarise Cat Lovers Data Set 
+```{r}
+glimpse(cat_lovers)
+cat_lovers %>%
+  summarise(mean_cats = mean(number_of_cats, na.rm = TRUE))
+```
+## Fixing the bad data in the numeric colum 
+```{r}
+cat_lovers %>%
+  mutate(number_of_cats = case_when(
+    name == "Ginger Clark" ~ 2,
+    name == "Doug Bass"    ~ 3,
+    TRUE                   ~ as.numeric(number_of_cats)
+    )) %>%
+  summarise(mean_cats = mean(number_of_cats))
+```
+## Always you need to respect data types
+```{r}
+cat_lovers %>%
+  mutate(
+    number_of_cats = case_when(
+      name == "Ginger Clark" ~ "2",
+      name == "Doug Bass"    ~ "3",
+      TRUE                   ~ number_of_cats
+      ),
+    number_of_cats = as.numeric(number_of_cats)
+    ) %>%
+  summarise(mean_cats = mean(number_of_cats))
+```
+## Now that we know what we are doing 
+```{r}
+cat_lovers <- cat_lovers %>%
+  mutate(
+    number_of_cats = case_when(
+      name == "Ginger Clark" ~ "2",
+      name == "Doug Bass"    ~ "3",
+      TRUE                   ~ number_of_cats
+      ),
+    number_of_cats = as.numeric(number_of_cats)
+    )
+```
+### Moral of the story
+If your data does not behave how you expect it to, type coercion upon reading in the data might be the reason.
+Go in and investigate your data, apply the fix, save your data, live happily ever after.
+
+
+## Data Types In R - Coercion
+```{r}
+typeof(TRUE)
+typeof("hello")
+typeof(1.335)
+typeof(7)
+typeof(7L)
+typeof(1:3)
+```
+## Concentration 
+```{r}
+c(1, 2, 3)
+c("Hello", "World!")
+c(c("hi", "hello"), c("bye", "jello"))
+```
+## Converting Between Types
+```{r}
+x <- 1:3
+x
+typeof(x)
+
+y <- as.character(x)
+y
+typeof(y)
+
+x <- c(TRUE, FALSE)
+x
+typeof(x)
+
+y <- as.numeric(x)
+y
+typeof(y)
+
+c(1, "Hello")
+c(FALSE, 3L)
+c(1.2, 3L)
+c(2L, "two")
+```
+
+
+
+
+

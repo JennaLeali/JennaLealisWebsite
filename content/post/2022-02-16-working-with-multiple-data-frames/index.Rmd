@@ -6,3 +6,17 @@ slug: working-with-multiple-data-frames
 categories: []
 tags: []
 ---
+
+## Call Libraries 
+```{r}
+library(tidyverse)
+library(tibble)
+```
+
+## Import file from Github 
+
+```{r}
+url <- 'https://raw.githubusercontent.com/JennaLeali/tidyverse/main/professions.csv'
+professions
+```
+
