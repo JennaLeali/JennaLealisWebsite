@@ -1,0 +1,14 @@
+---
+title: Statistics ibnn Google Colab
+author: R package build
+date: '2022-03-02'
+slug: statistics-ibnn-google-colab
+categories: []
+tags:
+  - colab
+---
+
+## Using R in Google Colab for Statistics 
+```{r}
+<script src="https://gist.github.com/JennaLeali/d088c4a9d726f32637ebbc5c8bed2502.js"></script>
+```
