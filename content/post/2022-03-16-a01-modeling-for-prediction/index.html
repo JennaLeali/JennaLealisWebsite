@@ -1,0 +1,356 @@
+---
+title: 'A01: Modeling for Prediction'
+author: R package build
+date: '2022-03-16'
+slug: a01-modeling-for-prediction
+categories: []
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="setup" class="section level2">
+<h2>SetUp</h2>
+<pre class="r"><code>library(ISLR)
+library(boot)</code></pre>
+</div>
+<div id="cross-validation" class="section level1">
+<h1>Cross Validation</h1>
+<div id="set-seed-to-reproduce-the-sampling-for-train---test-split" class="section level3">
+<h3>Set Seed: To reproduce the sampling for train - test split</h3>
+<pre class="r"><code>set.seed(1)
+head(Auto)</code></pre>
+<pre><code>##   mpg cylinders displacement horsepower weight acceleration year origin
+## 1  18         8          307        130   3504         12.0   70      1
+## 2  15         8          350        165   3693         11.5   70      1
+## 3  18         8          318        150   3436         11.0   70      1
+## 4  16         8          304        150   3433         12.0   70      1
+## 5  17         8          302        140   3449         10.5   70      1
+## 6  15         8          429        198   4341         10.0   70      1
+##                        name
+## 1 chevrolet chevelle malibu
+## 2         buick skylark 320
+## 3        plymouth satellite
+## 4             amc rebel sst
+## 5               ford torino
+## 6          ford galaxie 500</code></pre>
+<pre class="r"><code>dim(Auto)</code></pre>
+<pre><code>## [1] 392   9</code></pre>
+</div>
+<div id="create-an-index-to-randomly-sample-50-records-from-auto" class="section level3">
+<h3>Create an index to randomly sample %50 records from Auto</h3>
+<pre class="r"><code>train &lt;- sample(392, 196)
+head(train)</code></pre>
+<pre><code>## [1] 324 167 129 299 270 187</code></pre>
+</div>
+<div id="make-the-variables-in-auto-dataset-as-locally-accessible-object" class="section level3">
+<h3>Make the variables in Auto dataset as locally accessible object</h3>
+<pre class="r"><code>attach(Auto)
+lm.fit &lt;- lm(mpg~horsepower, data = Auto, subset = train)
+lm.fit</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = mpg ~ horsepower, data = Auto, subset = train)
+## 
+## Coefficients:
+## (Intercept)   horsepower  
+##     41.2835      -0.1697</code></pre>
+<pre class="r"><code>mean((mpg - predict(lm.fit, Auto))[-train]^2)</code></pre>
+<pre><code>## [1] 23.26601</code></pre>
+<pre class="r"><code>plot(mpg, horsepower)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="fit-a-quadratic-function" class="section level3">
+<h3>Fit a quadratic function</h3>
+<pre class="r"><code>lm.fit.poly &lt;- lm(mpg~poly(horsepower,2), data = Auto, subset = train)
+lm.fit.poly</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+## 
+## Coefficients:
+##          (Intercept)  poly(horsepower, 2)1  poly(horsepower, 2)2  
+##                23.55               -123.59                 47.72</code></pre>
+</div>
+<div id="as-we-increase-the-degree-of-the-polynomial-to-2-the-error-decreases" class="section level3">
+<h3>As we increase the degree of the polynomial to 2 the error decreases</h3>
+<pre class="r"><code>mean((mpg - predict(lm.fit.poly, Auto))[-train]^2)</code></pre>
+<pre><code>## [1] 18.71646</code></pre>
+<pre class="r"><code>n = 10
+set.seed(n)
+train &lt;- sample(392, 196)
+attach(Auto)</code></pre>
+<pre><code>## The following objects are masked from Auto (pos = 3):
+## 
+##     acceleration, cylinders, displacement, horsepower, mpg, name,
+##     origin, weight, year</code></pre>
+<pre class="r"><code>lm.fit &lt;- lm(mpg~horsepower, data = Auto, subset = train)
+lm.fit.poly &lt;- lm(mpg~poly(horsepower,2), data = Auto, subset = train)
+mean((mpg - predict(lm.fit, Auto))[-train]^2)</code></pre>
+<pre><code>## [1] 26.43531</code></pre>
+<pre class="r"><code>mean((mpg - predict(lm.fit.poly, Auto))[-train]^2)</code></pre>
+<pre><code>## [1] 19.87043</code></pre>
+</div>
+</div>
+<div id="loo-cv-leave-one-out-cross-validation" class="section level1">
+<h1>LOO CV: Leave one out cross validation</h1>
+<div id="glm-defaults-to-lm-when-passed-without-any-arguments" class="section level3">
+<h3>GLM defaults to lm when passed without any arguments</h3>
+<pre class="r"><code>glm.fit &lt;- glm(mpg~horsepower, data = Auto)
+coef(glm.fit)</code></pre>
+<pre><code>## (Intercept)  horsepower 
+##  39.9358610  -0.1578447</code></pre>
+<pre class="r"><code>lm.fit &lt;- lm(mpg~horsepower, data = Auto)
+coef(lm.fit)</code></pre>
+<pre><code>## (Intercept)  horsepower 
+##  39.9358610  -0.1578447</code></pre>
+<pre class="r"><code>cv.err &lt;- cv.glm(Auto, glm.fit)
+cv.err$delta</code></pre>
+<pre><code>## [1] 24.23151 24.23114</code></pre>
+<pre class="r"><code>cv.error &lt;- rep(0,5)
+degree &lt;- 1:5
+for (d in degree){
+  glm.fit &lt;- glm(mpg~poly(horsepower,d), data = Auto)
+  cv.error[d] &lt;- cv.glm(Auto, glm.fit)$delta[1]
+}
+cv.error</code></pre>
+<pre><code>## [1] 24.23151 19.24821 19.33498 19.42443 19.03321</code></pre>
+<pre class="r"><code>plot(degree, cv.error, type = &quot;b&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+<div id="k-fold-cross-validation" class="section level3">
+<h3>K fold Cross Validation</h3>
+<pre class="r"><code>K = 10
+cv.error.10 &lt;- rep(0,5)
+degree &lt;- 1:5
+for (d in degree){
+  glm.fit &lt;- glm(mpg~poly(horsepower,d), data = Auto)
+  cv.error.10[d] &lt;- cv.glm(Auto, glm.fit, K = K)$delta[1]
+}
+cv.error.10</code></pre>
+<pre><code>## [1] 24.25878 19.29201 19.35137 19.61177 18.99580</code></pre>
+<pre class="r"><code>plot(degree, cv.error, type = &quot;b&quot;)
+lines(degree, cv.error.10, type = &quot;b&quot;, col = &quot;red&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+</div>
+<div id="bootstrap-validation" class="section level1">
+<h1>Bootstrap Validation</h1>
+<div id="estimation-of-accuracy-of-a-linear-model" class="section level3">
+<h3>Estimation of Accuracy of a Linear Model</h3>
+<pre class="r"><code>boot.fn &lt;- function(data, index){
+  return(coef(lm(mpg~horsepower, data=data, subset = index)))
+}</code></pre>
+<pre class="r"><code>boot.fn(Auto, 1:392)</code></pre>
+<pre><code>## (Intercept)  horsepower 
+##  39.9358610  -0.1578447</code></pre>
+<pre class="r"><code>set.seed(1)
+boot.fn(Auto, sample(392, 392, replace=T))</code></pre>
+<pre><code>## (Intercept)  horsepower 
+##  40.3404517  -0.1634868</code></pre>
+<pre class="r"><code>boot.out &lt;- boot(Auto, boot.fn, 1000)</code></pre>
+<pre class="r"><code>plot(boot.out)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+</div>
+<div id="discuss-pros-and-cons-of-bootstrapping" class="section level3">
+<h3>Discuss Pros and Cons of Bootstrapping</h3>
+<div id="pros-bootstapping-is-a-straightforward-way-to-derive-the-estimates-of-standard-errors-and-confidence-intervals-bias-can-be-corrected-using-bootstrapping-and-an-improvement-over-the-normal-approximation-for-sampling-distributions.-bootstapping-can-be-applied-to-a-wide-variety-of-problems-including-nonlinear-regression-classification-confidence-interval-estimation-bias-estimation-and-so-on." class="section level5">
+<h5>Pros: Bootstapping is a straightforward way to derive the estimates of standard errors and confidence intervals, bias can be corrected using bootstrapping, and an improvement over the normal approximation for sampling distributions. Bootstapping can be applied to a wide variety of problems including nonlinear regression, classification, confidence interval estimation, bias estimation, and so on.</h5>
+</div>
+<div id="cons-a-bootstrap-sample-can-only-tell-us-things-about-the-original-sample-and-wont-give-us-any-new-information-about-the-real-population-sometimes-does-not-work-well-in-small-samples-and-bootstraps-can-fail-in-distributions-that-do-not-have-finite-moments-estimating-extreme-values-from-the-distribution-and-estimating-variance-in-survey-sampling-where-the-population-size-is-n-and-a-large-sample-n-is-taken." class="section level5">
+<h5>Cons: A bootstrap sample can only tell us things about the original sample and wont give us any new information about the real population, sometimes does not work well in small samples, and bootstraps can fail in distributions that do not have finite moments, estimating extreme values from the distribution, and estimating variance in survey sampling where the population size is N and a large sample n is taken.</h5>
+</div>
+</div>
+<div id="what-are-the-advantages-and-disadvantages-of-k-fold-cross-validation-relative-to" class="section level3">
+<h3>What are the advantages and disadvantages of k-fold cross validation relative to…</h3>
+<div id="single-split-validation-set-approach" class="section level4">
+<h4>Single Split Validation set approach</h4>
+<div id="advantages-the-validation-set-approach-is-conceptually-simple-and-easy-to-implement" class="section level5">
+<h5>Advantages: The validation set approach is conceptually simple and easy to implement</h5>
+</div>
+<div id="disadvantages-the-validation-can-be-highly-varaible-and-only-a-subset-of-observation-are-used-to-fit-the-model" class="section level5">
+<h5>Disadvantages: The validation can be highly varaible and only a subset of observation are used to fit the model</h5>
+</div>
+</div>
+<div id="loocv" class="section level4">
+<h4>LOOCV</h4>
+<div id="advantages-loocv-have-less-bias.-the-validation-approach-produces-different-mse-when-applied-repeatedly-due-to-randomness-in-the-splitting-process." class="section level5">
+<h5>Advantages: LOOCV have less bias. The validation approach produces different MSE when applied repeatedly due to randomness in the splitting process.</h5>
+</div>
+<div id="disadvantages-loocv-is-computationally-intensive" class="section level5">
+<h5>Disadvantages: LOOCV is computationally intensive</h5>
+</div>
+</div>
+</div>
+<div id="upload-the-data-in-your-github-account-and-directly-access-in-your-solution-file" class="section level3">
+<h3>Upload the data in your GitHub account and directly access in your solution file</h3>
+<pre class="r"><code>real.estate.data &lt;- read.csv(&quot;https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/Real%20estate%20valuation%20data%20set.csv&quot;)</code></pre>
+<div id="set-seed-to-reproduce-the-sampling-for-train---test-split-1" class="section level5">
+<h5>Set Seed: To reproduce the sampling for train - test split</h5>
+<pre class="r"><code>set.seed(1)
+head(real.estate.data)</code></pre>
+<pre><code>##   No X1.transaction.date X2.house.age X3.distance.to.the.nearest.MRT.station
+## 1  1            2012.917         32.0                               84.87882
+## 2  2            2012.917         19.5                              306.59470
+## 3  3            2013.583         13.3                              561.98450
+## 4  4            2013.500         13.3                              561.98450
+## 5  5            2012.833          5.0                              390.56840
+## 6  6            2012.667          7.1                             2175.03000
+##   X4.number.of.convenience.stores X5.latitude X6.longitude
+## 1                              10    24.98298     121.5402
+## 2                               9    24.98034     121.5395
+## 3                               5    24.98746     121.5439
+## 4                               5    24.98746     121.5439
+## 5                               5    24.97937     121.5425
+## 6                               3    24.96305     121.5125
+##   Y.house.price.of.unit.area
+## 1                       37.9
+## 2                       42.2
+## 3                       47.3
+## 4                       54.8
+## 5                       43.1
+## 6                       32.1</code></pre>
+<pre class="r"><code>dim(real.estate.data)</code></pre>
+<pre><code>## [1] 414   8</code></pre>
+</div>
+<div id="create-an-index-to-randomly-sample-50-for-real-estate-data" class="section level5">
+<h5>Create an index to randomly sample %50 for real estate data</h5>
+<pre class="r"><code>home &lt;- sample(414, 8)
+head(home)</code></pre>
+<pre><code>## [1] 324 167 129 299 270 187</code></pre>
+</div>
+<div id="make-the-variables-in-real-estate-dataset-as-locally-accessible-object" class="section level5">
+<h5>Make the variables in Real Estate dataset as locally accessible object</h5>
+<pre class="r"><code>attach(real.estate.data)
+lm.fit &lt;- lm(No~Y.house.price.of.unit.area
+, data = real.estate.data, subset = home)
+lm.fit</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = No ~ Y.house.price.of.unit.area, data = real.estate.data, 
+##     subset = home)
+## 
+## Coefficients:
+##                (Intercept)  Y.house.price.of.unit.area  
+##                    303.158                      -1.956</code></pre>
+<pre class="r"><code>mean((No - predict(lm.fit, real.estate.data))[-home]^2)</code></pre>
+<pre><code>## [1] 15449.36</code></pre>
+<pre class="r"><code>plot(No, Y.house.price.of.unit.area
+)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-27-1.png" width="672" />
+##### Fit a quadratic function</p>
+<pre class="r"><code>lm.fit.poly &lt;- lm(No~poly(Y.house.price.of.unit.area,2), data = real.estate.data, subset = home)
+lm.fit.poly</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = No ~ poly(Y.house.price.of.unit.area, 2), data = real.estate.data, 
+##     subset = home)
+## 
+## Coefficients:
+##                          (Intercept)  poly(Y.house.price.of.unit.area, 2)1  
+##                              228.905                              -540.560  
+## poly(Y.house.price.of.unit.area, 2)2  
+##                               -1.207</code></pre>
+<pre class="r"><code>mean((No - predict(lm.fit.poly, real.estate.data))[-home]^2)</code></pre>
+<pre><code>## [1] 15449.82</code></pre>
+<pre class="r"><code>n = 10
+set.seed(n)
+home &lt;- sample(414, 8)
+attach(real.estate.data)</code></pre>
+<pre><code>## The following objects are masked from real.estate.data (pos = 3):
+## 
+##     No, X1.transaction.date, X2.house.age,
+##     X3.distance.to.the.nearest.MRT.station,
+##     X4.number.of.convenience.stores, X5.latitude, X6.longitude,
+##     Y.house.price.of.unit.area</code></pre>
+<pre class="r"><code>lm.fit &lt;- lm(No~Y.house.price.of.unit.area, data = real.estate.data, subset = home)
+lm.fit.poly &lt;- lm(No~poly(Y.house.price.of.unit.area,2), data = real.estate.data, subset = home)
+mean((No - predict(lm.fit, real.estate.data))[-home]^2)</code></pre>
+<pre><code>## [1] 15244.31</code></pre>
+<pre class="r"><code>mean((No - predict(lm.fit.poly, real.estate.data))[-home]^2)</code></pre>
+<pre><code>## [1] 18298.56</code></pre>
+</div>
+</div>
+<div id="loocv-1" class="section level3">
+<h3>LOOCV</h3>
+<pre class="r"><code>glm.fit &lt;- glm(No~Y.house.price.of.unit.area, data = real.estate.data)
+coef(glm.fit)</code></pre>
+<pre><code>##                (Intercept) Y.house.price.of.unit.area 
+##                217.0480764                 -0.2513962</code></pre>
+<pre class="r"><code>lm.fit &lt;- lm(No~Y.house.price.of.unit.area, data = real.estate.data)
+coef(lm.fit)</code></pre>
+<pre><code>##                (Intercept) Y.house.price.of.unit.area 
+##                217.0480764                 -0.2513962</code></pre>
+<pre class="r"><code>cv.err &lt;- cv.glm(real.estate.data, glm.fit)
+cv.err$delta</code></pre>
+<pre><code>## [1] 14407.90 14407.73</code></pre>
+<pre class="r"><code>cv.error &lt;- rep(0,4)
+degree &lt;- 1:4
+for (d in degree) {
+  glm.fit &lt;- glm(No~poly(Y.house.price.of.unit.area,d), data = real.estate.data)
+  cv.error[d] &lt;- cv.glm(real.estate.data, glm.fit)$delta[1]
+}
+cv.error</code></pre>
+<pre><code>## [1] 14407.90 14539.21 16332.10 22687.78</code></pre>
+<pre class="r"><code>plot(degree, cv.error, type = &quot;b&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+</div>
+<div id="k-fold-cross-validation-1" class="section level3">
+<h3>K fold Cross Validation</h3>
+<pre class="r"><code>k = 5
+cv.error.5 &lt;- rep(0,5)
+degree &lt;- 1:5
+for (d in degree) {
+  glm.fit &lt;- glm(No~poly(Y.house.price.of.unit.area, d), data = real.estate.data)
+  cv.error.5[d] &lt;- cv.glm(real.estate.data, glm.fit, K = K)$delta[1]
+}
+cv.error.5</code></pre>
+<pre><code>## [1]  14431.51  14457.19  16374.81  19138.98 116364.92</code></pre>
+<pre class="r"><code>plot(degree, cv.error.5, type = &quot;b&quot;)
+lines(degree, cv.error.5, type = &quot;b&quot;, col = &quot;blue&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-39-1.png" width="672" />
+#### Try different polynomials, different Ks, different variables</p>
+<pre class="r"><code>k = 10
+cv.error.10 &lt;- rep(0,6)
+degree &lt;- 1:6
+for (d in degree) {
+  glm.fit &lt;- glm(No~poly(Y.house.price.of.unit.area, d), data = real.estate.data)
+  cv.error.10[d] &lt;- cv.glm(real.estate.data, glm.fit, K = K)$delta[1]
+}
+cv.error.10</code></pre>
+<pre><code>## [1]  14355.49  14521.79  15671.02  19795.07 286184.49 257150.56</code></pre>
+<pre class="r"><code>plot(degree, cv.error.10, type = &quot;b&quot;)
+lines(degree, cv.error.10, type = &quot;b&quot;, col = &quot;red&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
+<pre class="r"><code>k = 20
+cv.error.20 &lt;- rep(0,8)
+degree &lt;- 1:8
+for (d in degree) {
+  glm.fit &lt;- glm(No~poly(Y.house.price.of.unit.area, d), data = real.estate.data)
+  cv.error.20[d] &lt;- cv.glm(real.estate.data, glm.fit, K = K)$delta[1]
+}
+cv.error.20</code></pre>
+<pre><code>## [1]   14442.47   14818.60   15699.42   23638.98   73902.52 1414196.64  126228.96
+## [8] 4378667.22</code></pre>
+<pre class="r"><code>plot(degree, cv.error.20, type = &quot;b&quot;)
+lines(degree, cv.error.20, type = &quot;b&quot;, col = &quot;green&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
+</div>
+<div id="build-a-bootstrapping-validation-method-based-predictive-model-to-find-a-good-model" class="section level3">
+<h3>Build a bootstrapping validation method based predictive model to find a good model</h3>
+<pre class="r"><code>boot.fn &lt;- function(data, index){
+  return(coef(lm(No~Y.house.price.of.unit.area, data=data, subset = index)))
+}</code></pre>
+<pre class="r"><code>boot.fn(real.estate.data, 8:414)</code></pre>
+<pre><code>##                (Intercept) Y.house.price.of.unit.area 
+##                217.2904532                 -0.1659664</code></pre>
+<pre class="r"><code>set.seed(1)
+boot.fn(real.estate.data, sample(414, 414, replace=T))</code></pre>
+<pre><code>##                (Intercept) Y.house.price.of.unit.area 
+##                192.4961255                  0.3721979</code></pre>
+<pre class="r"><code>boot.out.real &lt;- boot(real.estate.data, boot.fn, 5000)</code></pre>
+<pre class="r"><code>plot(boot.out.real)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
+</div>
+</div>

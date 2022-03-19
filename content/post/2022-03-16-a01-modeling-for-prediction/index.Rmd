@@ -1,0 +1,307 @@
+---
+title: 'A01: Modeling for Prediction'
+author: R package build
+date: '2022-03-16'
+slug: a01-modeling-for-prediction
+categories: []
+tags: []
+---
+## SetUp 
+```{r}
+library(ISLR)
+library(boot)
+```
+
+# Cross Validation
+### Set Seed: To reproduce the sampling for train - test split
+```{r}
+set.seed(1)
+head(Auto)
+dim(Auto)
+```
+
+### Create an index to randomly sample %50 records from Auto 
+```{r}
+train <- sample(392, 196)
+head(train)
+```
+
+### Make the variables in Auto dataset as locally accessible object
+```{r}
+attach(Auto)
+lm.fit <- lm(mpg~horsepower, data = Auto, subset = train)
+lm.fit
+```
+
+```{r}
+mean((mpg - predict(lm.fit, Auto))[-train]^2)
+```
+
+```{r}
+plot(mpg, horsepower)
+```
+
+### Fit a quadratic function
+```{r}
+lm.fit.poly <- lm(mpg~poly(horsepower,2), data = Auto, subset = train)
+lm.fit.poly
+```
+
+### As we increase the degree of the polynomial to 2 the error decreases 
+```{r}
+mean((mpg - predict(lm.fit.poly, Auto))[-train]^2)
+```
+
+```{r}
+n = 10
+set.seed(n)
+train <- sample(392, 196)
+attach(Auto)
+lm.fit <- lm(mpg~horsepower, data = Auto, subset = train)
+lm.fit.poly <- lm(mpg~poly(horsepower,2), data = Auto, subset = train)
+mean((mpg - predict(lm.fit, Auto))[-train]^2)
+mean((mpg - predict(lm.fit.poly, Auto))[-train]^2)
+```
+
+# LOO CV: Leave one out cross validation 
+### GLM defaults to lm when passed without any arguments 
+```{r}
+glm.fit <- glm(mpg~horsepower, data = Auto)
+coef(glm.fit)
+lm.fit <- lm(mpg~horsepower, data = Auto)
+coef(lm.fit)
+```
+
+```{r}
+cv.err <- cv.glm(Auto, glm.fit)
+cv.err$delta
+```
+
+```{r}
+cv.error <- rep(0,5)
+degree <- 1:5
+for (d in degree){
+  glm.fit <- glm(mpg~poly(horsepower,d), data = Auto)
+  cv.error[d] <- cv.glm(Auto, glm.fit)$delta[1]
+}
+cv.error
+```
+
+```{r}
+plot(degree, cv.error, type = "b")
+```
+
+### K fold Cross Validation
+```{r}
+K = 10
+cv.error.10 <- rep(0,5)
+degree <- 1:5
+for (d in degree){
+  glm.fit <- glm(mpg~poly(horsepower,d), data = Auto)
+  cv.error.10[d] <- cv.glm(Auto, glm.fit, K = K)$delta[1]
+}
+cv.error.10
+```
+
+```{r}
+plot(degree, cv.error, type = "b")
+lines(degree, cv.error.10, type = "b", col = "red")
+```
+
+# Bootstrap Validation 
+### Estimation of Accuracy of a Linear Model
+```{r}
+boot.fn <- function(data, index){
+  return(coef(lm(mpg~horsepower, data=data, subset = index)))
+}
+```
+
+```{r}
+boot.fn(Auto, 1:392)
+```
+
+```{r}
+set.seed(1)
+boot.fn(Auto, sample(392, 392, replace=T))
+```
+
+```{r}
+boot.out <- boot(Auto, boot.fn, 1000)
+```
+
+```{r}
+plot(boot.out)
+```
+
+### Discuss Pros and Cons of Bootstrapping 
+##### Pros: Bootstapping is a straightforward way to derive the estimates of standard errors and confidence intervals, bias can be corrected using bootstrapping, and an improvement over the normal approximation for sampling distributions. Bootstapping can be applied to a wide variety of problems including nonlinear regression, classification, confidence interval estimation, bias estimation, and so on. 
+##### Cons: A bootstrap sample can only tell us things about the original sample and wont give us any new information about the real population, sometimes does not work well in small samples, and bootstraps can fail in distributions that do not have finite moments, estimating extreme values from the distribution, and estimating variance in survey sampling where the population size is N and a large sample n is taken.
+
+### What are the advantages and disadvantages of k-fold cross validation relative to... 
+
+#### Single Split Validation set approach 
+##### Advantages: The validation set approach is conceptually simple and easy to implement 
+##### Disadvantages: The validation can be highly varaible and only a subset of observation are used to fit the model 
+
+#### LOOCV
+##### Advantages: LOOCV have less bias. The validation approach produces different MSE when applied repeatedly due to randomness in the splitting process. 
+##### Disadvantages: LOOCV is computationally intensive 
+
+
+### Upload the data in your GitHub account and directly access in your solution file
+```{r}
+real.estate.data <- read.csv("https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/Real%20estate%20valuation%20data%20set.csv")
+```
+
+##### Set Seed: To reproduce the sampling for train - test split 
+```{r}
+set.seed(1)
+head(real.estate.data)
+```
+```{r}
+dim(real.estate.data)
+```
+
+##### Create an index to randomly sample %50 for real estate data
+```{r}
+home <- sample(414, 8)
+head(home)
+```
+
+##### Make the variables in Real Estate dataset as locally accessible object
+```{r}
+attach(real.estate.data)
+lm.fit <- lm(No~Y.house.price.of.unit.area
+, data = real.estate.data, subset = home)
+lm.fit
+```
+```{r}
+mean((No - predict(lm.fit, real.estate.data))[-home]^2)
+```
+```{r}
+plot(No, Y.house.price.of.unit.area
+)
+```
+##### Fit a quadratic function 
+```{r}
+lm.fit.poly <- lm(No~poly(Y.house.price.of.unit.area,2), data = real.estate.data, subset = home)
+lm.fit.poly
+```
+```{r}
+mean((No - predict(lm.fit.poly, real.estate.data))[-home]^2)
+```
+```{r}
+n = 10
+set.seed(n)
+home <- sample(414, 8)
+attach(real.estate.data)
+```
+
+```{r}
+lm.fit <- lm(No~Y.house.price.of.unit.area, data = real.estate.data, subset = home)
+lm.fit.poly <- lm(No~poly(Y.house.price.of.unit.area,2), data = real.estate.data, subset = home)
+mean((No - predict(lm.fit, real.estate.data))[-home]^2)
+```
+```{r}
+mean((No - predict(lm.fit.poly, real.estate.data))[-home]^2)
+```
+
+### LOOCV
+```{r}
+glm.fit <- glm(No~Y.house.price.of.unit.area, data = real.estate.data)
+coef(glm.fit)
+```
+
+```{r}
+lm.fit <- lm(No~Y.house.price.of.unit.area, data = real.estate.data)
+coef(lm.fit)
+```
+
+```{r}
+cv.err <- cv.glm(real.estate.data, glm.fit)
+cv.err$delta
+```
+```{r}
+cv.error <- rep(0,4)
+degree <- 1:4
+for (d in degree) {
+  glm.fit <- glm(No~poly(Y.house.price.of.unit.area,d), data = real.estate.data)
+  cv.error[d] <- cv.glm(real.estate.data, glm.fit)$delta[1]
+}
+cv.error
+```
+```{r}
+plot(degree, cv.error, type = "b")
+```
+
+### K fold Cross Validation 
+```{r}
+k = 5
+cv.error.5 <- rep(0,5)
+degree <- 1:5
+for (d in degree) {
+  glm.fit <- glm(No~poly(Y.house.price.of.unit.area, d), data = real.estate.data)
+  cv.error.5[d] <- cv.glm(real.estate.data, glm.fit, K = K)$delta[1]
+}
+cv.error.5
+```
+```{r}
+plot(degree, cv.error.5, type = "b")
+lines(degree, cv.error.5, type = "b", col = "blue")
+```
+#### Try different polynomials, different Ks, different variables 
+```{r}
+k = 10
+cv.error.10 <- rep(0,6)
+degree <- 1:6
+for (d in degree) {
+  glm.fit <- glm(No~poly(Y.house.price.of.unit.area, d), data = real.estate.data)
+  cv.error.10[d] <- cv.glm(real.estate.data, glm.fit, K = K)$delta[1]
+}
+cv.error.10
+```
+```{r}
+plot(degree, cv.error.10, type = "b")
+lines(degree, cv.error.10, type = "b", col = "red")
+```
+
+```{r}
+k = 20
+cv.error.20 <- rep(0,8)
+degree <- 1:8
+for (d in degree) {
+  glm.fit <- glm(No~poly(Y.house.price.of.unit.area, d), data = real.estate.data)
+  cv.error.20[d] <- cv.glm(real.estate.data, glm.fit, K = K)$delta[1]
+}
+cv.error.20
+```
+```{r}
+plot(degree, cv.error.20, type = "b")
+lines(degree, cv.error.20, type = "b", col = "green")
+```
+
+### Build a bootstrapping validation method based predictive model to find a good model
+```{r}
+boot.fn <- function(data, index){
+  return(coef(lm(No~Y.house.price.of.unit.area, data=data, subset = index)))
+}
+```
+```{r}
+boot.fn(real.estate.data, 8:414)
+```
+```{r}
+set.seed(1)
+boot.fn(real.estate.data, sample(414, 414, replace=T))
+```
+```{r}
+boot.out.real <- boot(real.estate.data, boot.fn, 5000)
+```
+```{r}
+plot(boot.out.real)
+```
+
+
+
+
+ 
+
