@@ -1,0 +1,83 @@
+---
+title: 'A02: Regression Models'
+author: R package build
+date: '2022-03-21'
+slug: a02-regression-models
+categories: []
+tags: []
+---
+
+
+#### A professor of machine learning is planning to get married to his long-time girlfriend. He has never shopped for diamonds before. In the mall, he was confronted with a dizzying array of diamond characteristics, configurations, and pricing. His quick search revealed that diamonds are primarily characterized by 4C viz. Color, Cut, Carat Weight and Clarity besides Polish, Symmetry, and certification. He scrapped the web to collect information from three different wholesaler websites to build his pricing model to ensure he does not get cheated while purchasing the diamond ring. Build a Linear Regression Model to predict the price of the diamond ring of his interest. 
+
+# Perform and upload your RMD file / Google Colab Script and the link
+```{r}
+library(rmarkdown)
+```
+
+# Store the data in a Github repository
+```{r}
+professor.proposes.data <- read.csv("https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/Professor_Proposes_Data%201.csv")
+```
+```{r}
+set.seed(1)
+head(professor.proposes.data)
+```
+
+# Use suitable transformations to improve the variables predictive power and Use ggplot2 / Matplotlib and its extensions. Consider exploring
+```{r}
+str(professor.proposes.data)
+```
+```{r}
+par(mfrow = c(1,2))
+plot(Carat ~ Wholesaler, data = professor.proposes.data, col = "dodgerblue", pch = 20, cex = .5)
+Carat_Wholesaler = lm(Carat ~ Wholesaler, data = professor.proposes.data)
+abline(Carat_Wholesaler, col = "darkorange", lwd = 2)
+plot(fitted(Carat_Wholesaler), resid(Carat_Wholesaler), col = "dodgerblue",
+     pch = 20, cex = 1.5, xlab = "Fitted", ylab = "Residuals")
+abline(h = 0, lty = 2, col = "darkorange", lwd = 2)
+```
+```{r}
+par(mfrow = c(1, 2))
+plot(log(Carat) ~ Wholesaler, data = professor.proposes.data, col = "dodgerblue", pch = 20, cex = 1.5)
+Carat_Wholesaler_log = lm(log(Carat) ~ Wholesaler, data = professor.proposes.data)
+abline(Carat_Wholesaler_log, col = "darkorange", lwd = 2)
+plot(fitted(Carat_Wholesaler_log), resid(Carat_Wholesaler_log), col = "dodgerblue",
+     pch = 20, cex = 1.5, xlab = "Fitted", ylab = "Residuals")
+abline(h = 0, lty = 2, col = "darkorange", lwd = 2)
+```
+```{r}
+par(mfrow = c(1, 2))
+plot(log(Carat) ~ log(Wholesaler), data = professor.proposes.data, col = "dodgerblue", pch = 20, cex = 1.5)
+Carat_Wholesaler_loglog = lm(log(Carat) ~ log(Wholesaler), data = professor.proposes.data)
+abline(Carat_Wholesaler_loglog, col = "darkorange", lwd = 2)
+plot(fitted(Carat_Wholesaler_loglog), resid(Carat_Wholesaler_loglog), col = "dodgerblue",
+     pch = 20, cex = 1.5, xlab = "Fitted", ylab = "Residuals")
+abline(h = 0, lty = 2, col = "darkorange", lwd = 2)
+```
+
+```{r}
+x <- professor.proposes.data$Carat
+y <- professor.proposes.data$Wholesaler
+fit <- lm(x ~ y)
+fit
+```
+
+```{r}
+all(is.na(x))
+all(is.na(y))
+```
+
+
+```{r}
+x <- professor.proposes.data$Carat - mean(professor.proposes.data$Carat)
+y <- professor.proposes.data$Wholesaler
+```
+
+
+
+
+
+
+
+

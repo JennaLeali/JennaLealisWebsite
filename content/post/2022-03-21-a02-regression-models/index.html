@@ -1,0 +1,87 @@
+---
+title: 'A02: Regression Models'
+author: R package build
+date: '2022-03-21'
+slug: a02-regression-models
+categories: []
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="a-professor-of-machine-learning-is-planning-to-get-married-to-his-long-time-girlfriend.-he-has-never-shopped-for-diamonds-before.-in-the-mall-he-was-confronted-with-a-dizzying-array-of-diamond-characteristics-configurations-and-pricing.-his-quick-search-revealed-that-diamonds-are-primarily-characterized-by-4c-viz.-color-cut-carat-weight-and-clarity-besides-polish-symmetry-and-certification.-he-scrapped-the-web-to-collect-information-from-three-different-wholesaler-websites-to-build-his-pricing-model-to-ensure-he-does-not-get-cheated-while-purchasing-the-diamond-ring.-build-a-linear-regression-model-to-predict-the-price-of-the-diamond-ring-of-his-interest." class="section level4">
+<h4>A professor of machine learning is planning to get married to his long-time girlfriend. He has never shopped for diamonds before. In the mall, he was confronted with a dizzying array of diamond characteristics, configurations, and pricing. His quick search revealed that diamonds are primarily characterized by 4C viz. Color, Cut, Carat Weight and Clarity besides Polish, Symmetry, and certification. He scrapped the web to collect information from three different wholesaler websites to build his pricing model to ensure he does not get cheated while purchasing the diamond ring. Build a Linear Regression Model to predict the price of the diamond ring of his interest.</h4>
+</div>
+<div id="perform-and-upload-your-rmd-file-google-colab-script-and-the-link" class="section level1">
+<h1>Perform and upload your RMD file / Google Colab Script and the link</h1>
+<pre class="r"><code>library(rmarkdown)</code></pre>
+</div>
+<div id="store-the-data-in-a-github-repository" class="section level1">
+<h1>Store the data in a Github repository</h1>
+<pre class="r"><code>professor.proposes.data &lt;- read.csv(&quot;https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/Professor_Proposes_Data%201.csv&quot;)</code></pre>
+<pre class="r"><code>set.seed(1)
+head(professor.proposes.data)</code></pre>
+<pre><code>##   Carat Colour Clarity Cut Certification Polish Symmetry  Price Wholesaler
+## 1  0.92      I     SI2   G           AGS      V        V $3,000          1
+## 2  0.92      I     SI2   V           AGS      G        G $3,000          1
+## 3  0.82      F     SI2   I           GIA      X        X $3,004          1
+## 4  0.81      G     SI1   I           GIA      X        V $3,004          1
+## 5  0.90      J     VS2   V           GIA      V        V $3,006          1
+## 6  0.87      F     SI2   I           AGS      G        V $3,007          1</code></pre>
+</div>
+<div id="use-suitable-transformations-to-improve-the-variables-predictive-power-and-use-ggplot2-matplotlib-and-its-extensions.-consider-exploring" class="section level1">
+<h1>Use suitable transformations to improve the variables predictive power and Use ggplot2 / Matplotlib and its extensions. Consider exploring</h1>
+<pre class="r"><code>str(professor.proposes.data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    441 obs. of  9 variables:
+##  $ Carat        : num  0.92 0.92 0.82 0.81 0.9 0.87 0.8 0.84 0.8 0.8 ...
+##  $ Colour       : chr  &quot;I&quot; &quot;I&quot; &quot;F&quot; &quot;G&quot; ...
+##  $ Clarity      : chr  &quot;SI2&quot; &quot;SI2&quot; &quot;SI2&quot; &quot;SI1&quot; ...
+##  $ Cut          : chr  &quot;G&quot; &quot;V&quot; &quot;I&quot; &quot;I&quot; ...
+##  $ Certification: chr  &quot;AGS&quot; &quot;AGS&quot; &quot;GIA&quot; &quot;GIA&quot; ...
+##  $ Polish       : chr  &quot;V&quot; &quot;G&quot; &quot;X&quot; &quot;X&quot; ...
+##  $ Symmetry     : chr  &quot;V&quot; &quot;G&quot; &quot;X&quot; &quot;V&quot; ...
+##  $ Price        : chr  &quot;$3,000&quot; &quot;$3,000&quot; &quot;$3,004&quot; &quot;$3,004&quot; ...
+##  $ Wholesaler   : int  1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<pre class="r"><code>par(mfrow = c(1,2))
+plot(Carat ~ Wholesaler, data = professor.proposes.data, col = &quot;dodgerblue&quot;, pch = 20, cex = .5)
+Carat_Wholesaler = lm(Carat ~ Wholesaler, data = professor.proposes.data)
+abline(Carat_Wholesaler, col = &quot;darkorange&quot;, lwd = 2)
+plot(fitted(Carat_Wholesaler), resid(Carat_Wholesaler), col = &quot;dodgerblue&quot;,
+     pch = 20, cex = 1.5, xlab = &quot;Fitted&quot;, ylab = &quot;Residuals&quot;)
+abline(h = 0, lty = 2, col = &quot;darkorange&quot;, lwd = 2)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>par(mfrow = c(1, 2))
+plot(log(Carat) ~ Wholesaler, data = professor.proposes.data, col = &quot;dodgerblue&quot;, pch = 20, cex = 1.5)
+Carat_Wholesaler_log = lm(log(Carat) ~ Wholesaler, data = professor.proposes.data)
+abline(Carat_Wholesaler_log, col = &quot;darkorange&quot;, lwd = 2)
+plot(fitted(Carat_Wholesaler_log), resid(Carat_Wholesaler_log), col = &quot;dodgerblue&quot;,
+     pch = 20, cex = 1.5, xlab = &quot;Fitted&quot;, ylab = &quot;Residuals&quot;)
+abline(h = 0, lty = 2, col = &quot;darkorange&quot;, lwd = 2)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>par(mfrow = c(1, 2))
+plot(log(Carat) ~ log(Wholesaler), data = professor.proposes.data, col = &quot;dodgerblue&quot;, pch = 20, cex = 1.5)
+Carat_Wholesaler_loglog = lm(log(Carat) ~ log(Wholesaler), data = professor.proposes.data)
+abline(Carat_Wholesaler_loglog, col = &quot;darkorange&quot;, lwd = 2)
+plot(fitted(Carat_Wholesaler_loglog), resid(Carat_Wholesaler_loglog), col = &quot;dodgerblue&quot;,
+     pch = 20, cex = 1.5, xlab = &quot;Fitted&quot;, ylab = &quot;Residuals&quot;)
+abline(h = 0, lty = 2, col = &quot;darkorange&quot;, lwd = 2)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>x &lt;- professor.proposes.data$Carat
+y &lt;- professor.proposes.data$Wholesaler
+fit &lt;- lm(x ~ y)
+fit</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = x ~ y)
+## 
+## Coefficients:
+## (Intercept)            y  
+##      1.6435      -0.4203</code></pre>
+<pre class="r"><code>all(is.na(x))</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code>all(is.na(y))</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code>x &lt;- professor.proposes.data$Carat - mean(professor.proposes.data$Carat)
+y &lt;- professor.proposes.data$Wholesaler</code></pre>
+</div>

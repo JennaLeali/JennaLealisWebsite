@@ -182,6 +182,7 @@ mean((No - predict(lm.fit, real.estate.data))[-home]^2)
 plot(No, Y.house.price.of.unit.area
 )
 ```
+
 ##### Fit a quadratic function 
 ```{r}
 lm.fit.poly <- lm(No~poly(Y.house.price.of.unit.area,2), data = real.estate.data, subset = home)
@@ -234,7 +235,7 @@ cv.error
 plot(degree, cv.error, type = "b")
 ```
 
-### K fold Cross Validation 
+### Build a k-fold cross validation method based predictive model to find a good model 
 ```{r}
 k = 5
 cv.error.5 <- rep(0,5)
