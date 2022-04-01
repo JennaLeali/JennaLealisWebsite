@@ -1,0 +1,130 @@
+---
+title: A03
+author: R package build
+date: '2022-04-01'
+slug: a03
+categories: []
+tags: []
+---
+
+# Library Setup
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(class)
+library(caret)
+```
+
+# Load the Data
+```{r}
+train_data = read.csv("https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/train.csv")
+head(train_data) 
+```
+```{r}
+test_data = read.csv("https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/test.csv")
+head(test_data)
+```
+```{r}
+survived = read.csv("https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/gender_submission.csv")
+head(survived)
+```
+
+# Explore a pattern
+
+```{r}
+test1 <- cbind(test_data, Survived = survived$Survived)
+```
+
+```{r}
+colSums(is.na(train_data))
+```
+
+```{r}
+train_data_clean <- train_data %>%
+    mutate(Age = if_else(is.na(Age), mean(Age, na.rm = TRUE), Age))
+
+colSums(is.na(train_data_clean))
+```
+
+```{r}
+colSums(is.na(test1))
+```
+
+```{r}
+test_clean <- test1 %>% 
+    na.omit()
+```
+
+```{r}
+data_train <- train_data_clean %>% 
+        select(-c(PassengerId, Name, Ticket, Embarked, Cabin)) %>% 
+        mutate(Survived = as.factor(Survived),
+           Pclass = as.factor(Pclass),
+           Sex = as.factor(Sex),
+           SibSp = as.factor(SibSp),
+           Parch = as.factor(Parch))
+
+data_test <- test_clean %>% 
+        select(-c(PassengerId, Name, Ticket, Embarked, Cabin)) %>% 
+        mutate(Survived = as.factor(Survived),
+           Pclass = as.factor(Pclass),
+           Sex = as.factor(Sex),
+           SibSp = as.factor(SibSp),
+           Parch = as.factor(Parch))
+```
+
+```{r}
+str(data_train)
+```
+
+```{r}
+prop.table(table(data_train$Survived))
+```
+
+# Use Logistic Regression Model
+```{r}
+m1 <- glm(Survived~., data_train, family = "binomial") 
+summary(m1)
+```
+
+```{r}
+m2 <- step(object = glm(Survived~., data_train, family = "binomial"),
+                    direction = "backward")
+```
+
+```{r}
+summary(m2)
+```
+
+```{r}
+data_test$prob <- predict(m2, type = "response", newdata = data_test)
+```
+
+#### Distribution of predicted data
+
+```{r}
+ggplot(data_test, aes(x=prob)) +
+  geom_density(lwd=0.5) +
+  labs(title = "Distribution of Probability") +
+  theme_minimal()
+```
+
+###### If the probability is greater than 0.5, the label will get 1 (survived). If the probability is lower than 0.5, the label will get 0 (not survived).
+
+```{r}
+data_test$pred_label <- factor(ifelse(data_test$prob > 0.5, 1, 0)) #1 = survived, 0 = not survived
+data_test %>% 
+    select(Survived, pred_label) %>% 
+    head()
+```
+
+## Model Evaluation 
+```{r}
+confusionMatrix(reference = as.factor(data_test$Survived), 
+                data = as.factor(data_test$pred_label), positive = "1" )
+```
+
+
+
+

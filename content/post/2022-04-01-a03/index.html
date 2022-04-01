@@ -1,0 +1,296 @@
+---
+title: A03
+author: R package build
+date: '2022-04-01'
+slug: a03
+categories: []
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="library-setup" class="section level1">
+<h1>Library Setup</h1>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(class)
+library(caret)</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+</div>
+<div id="load-the-data" class="section level1">
+<h1>Load the Data</h1>
+<pre class="r"><code>train_data = read.csv(&quot;https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/train.csv&quot;)
+head(train_data) </code></pre>
+<pre><code>##   PassengerId Survived Pclass
+## 1           1        0      3
+## 2           2        1      1
+## 3           3        1      3
+## 4           4        1      1
+## 5           5        0      3
+## 6           6        0      3
+##                                                  Name    Sex Age SibSp Parch
+## 1                             Braund, Mr. Owen Harris   male  22     1     0
+## 2 Cumings, Mrs. John Bradley (Florence Briggs Thayer) female  38     1     0
+## 3                              Heikkinen, Miss. Laina female  26     0     0
+## 4        Futrelle, Mrs. Jacques Heath (Lily May Peel) female  35     1     0
+## 5                            Allen, Mr. William Henry   male  35     0     0
+## 6                                    Moran, Mr. James   male  NA     0     0
+##             Ticket    Fare Cabin Embarked
+## 1        A/5 21171  7.2500              S
+## 2         PC 17599 71.2833   C85        C
+## 3 STON/O2. 3101282  7.9250              S
+## 4           113803 53.1000  C123        S
+## 5           373450  8.0500              S
+## 6           330877  8.4583              Q</code></pre>
+<pre class="r"><code>test_data = read.csv(&quot;https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/test.csv&quot;)
+head(test_data)</code></pre>
+<pre><code>##   PassengerId Pclass                                         Name    Sex  Age
+## 1         892      3                             Kelly, Mr. James   male 34.5
+## 2         893      3             Wilkes, Mrs. James (Ellen Needs) female 47.0
+## 3         894      2                    Myles, Mr. Thomas Francis   male 62.0
+## 4         895      3                             Wirz, Mr. Albert   male 27.0
+## 5         896      3 Hirvonen, Mrs. Alexander (Helga E Lindqvist) female 22.0
+## 6         897      3                   Svensson, Mr. Johan Cervin   male 14.0
+##   SibSp Parch  Ticket    Fare Cabin Embarked
+## 1     0     0  330911  7.8292              Q
+## 2     1     0  363272  7.0000              S
+## 3     0     0  240276  9.6875              Q
+## 4     0     0  315154  8.6625              S
+## 5     1     1 3101298 12.2875              S
+## 6     0     0    7538  9.2250              S</code></pre>
+<pre class="r"><code>survived = read.csv(&quot;https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/gender_submission.csv&quot;)
+head(survived)</code></pre>
+<pre><code>##   PassengerId Survived
+## 1         892        0
+## 2         893        1
+## 3         894        0
+## 4         895        0
+## 5         896        1
+## 6         897        0</code></pre>
+</div>
+<div id="explore-a-pattern" class="section level1">
+<h1>Explore a pattern</h1>
+<pre class="r"><code>test1 &lt;- cbind(test_data, Survived = survived$Survived)</code></pre>
+<pre class="r"><code>colSums(is.na(train_data))</code></pre>
+<pre><code>## PassengerId    Survived      Pclass        Name         Sex         Age 
+##           0           0           0           0           0         177 
+##       SibSp       Parch      Ticket        Fare       Cabin    Embarked 
+##           0           0           0           0           0           0</code></pre>
+<pre class="r"><code>train_data_clean &lt;- train_data %&gt;%
+    mutate(Age = if_else(is.na(Age), mean(Age, na.rm = TRUE), Age))
+
+colSums(is.na(train_data_clean))</code></pre>
+<pre><code>## PassengerId    Survived      Pclass        Name         Sex         Age 
+##           0           0           0           0           0           0 
+##       SibSp       Parch      Ticket        Fare       Cabin    Embarked 
+##           0           0           0           0           0           0</code></pre>
+<pre class="r"><code>colSums(is.na(test1))</code></pre>
+<pre><code>## PassengerId      Pclass        Name         Sex         Age       SibSp 
+##           0           0           0           0          86           0 
+##       Parch      Ticket        Fare       Cabin    Embarked    Survived 
+##           0           0           1           0           0           0</code></pre>
+<pre class="r"><code>test_clean &lt;- test1 %&gt;% 
+    na.omit()</code></pre>
+<pre class="r"><code>data_train &lt;- train_data_clean %&gt;% 
+        select(-c(PassengerId, Name, Ticket, Embarked, Cabin)) %&gt;% 
+        mutate(Survived = as.factor(Survived),
+           Pclass = as.factor(Pclass),
+           Sex = as.factor(Sex),
+           SibSp = as.factor(SibSp),
+           Parch = as.factor(Parch))
+
+data_test &lt;- test_clean %&gt;% 
+        select(-c(PassengerId, Name, Ticket, Embarked, Cabin)) %&gt;% 
+        mutate(Survived = as.factor(Survived),
+           Pclass = as.factor(Pclass),
+           Sex = as.factor(Sex),
+           SibSp = as.factor(SibSp),
+           Parch = as.factor(Parch))</code></pre>
+<pre class="r"><code>str(data_train)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    891 obs. of  7 variables:
+##  $ Survived: Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 2 2 2 1 1 1 1 2 2 ...
+##  $ Pclass  : Factor w/ 3 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;: 3 1 3 1 3 3 1 3 3 2 ...
+##  $ Sex     : Factor w/ 2 levels &quot;female&quot;,&quot;male&quot;: 2 1 1 1 2 2 2 2 1 1 ...
+##  $ Age     : num  22 38 26 35 35 ...
+##  $ SibSp   : Factor w/ 7 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 2 1 2 1 1 1 4 1 2 ...
+##  $ Parch   : Factor w/ 7 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 2 3 1 ...
+##  $ Fare    : num  7.25 71.28 7.92 53.1 8.05 ...</code></pre>
+<pre class="r"><code>prop.table(table(data_train$Survived))</code></pre>
+<pre><code>## 
+##         0         1 
+## 0.6161616 0.3838384</code></pre>
+</div>
+<div id="use-logistic-regression-model" class="section level1">
+<h1>Use Logistic Regression Model</h1>
+<pre class="r"><code>m1 &lt;- glm(Survived~., data_train, family = &quot;binomial&quot;) 
+summary(m1)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Survived ~ ., family = &quot;binomial&quot;, data = data_train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.8306  -0.6225  -0.4347   0.6019   2.4601  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  3.510e+00  4.662e-01   7.531 5.05e-14 ***
+## Pclass2     -1.057e+00  2.987e-01  -3.539 0.000402 ***
+## Pclass3     -2.016e+00  2.946e-01  -6.841 7.86e-12 ***
+## Sexmale     -2.719e+00  2.007e-01 -13.544  &lt; 2e-16 ***
+## Age         -3.639e-02  8.343e-03  -4.362 1.29e-05 ***
+## SibSp1       8.279e-02  2.239e-01   0.370 0.711570    
+## SibSp2      -2.858e-01  5.342e-01  -0.535 0.592645    
+## SibSp3      -2.353e+00  7.175e-01  -3.280 0.001040 ** 
+## SibSp4      -1.773e+00  7.687e-01  -2.306 0.021108 *  
+## SibSp5      -1.611e+01  9.549e+02  -0.017 0.986541    
+## SibSp8      -1.609e+01  7.542e+02  -0.021 0.982984    
+## Parch1       3.808e-01  2.891e-01   1.317 0.187769    
+## Parch2       4.165e-02  3.789e-01   0.110 0.912462    
+## Parch3       2.485e-01  1.040e+00   0.239 0.811241    
+## Parch4      -1.609e+01  1.053e+03  -0.015 0.987805    
+## Parch5      -1.329e+00  1.168e+00  -1.138 0.255228    
+## Parch6      -1.671e+01  2.400e+03  -0.007 0.994444    
+## Fare         2.810e-03  2.483e-03   1.132 0.257803    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 1186.66  on 890  degrees of freedom
+## Residual deviance:  768.71  on 873  degrees of freedom
+## AIC: 804.71
+## 
+## Number of Fisher Scoring iterations: 15</code></pre>
+<pre class="r"><code>m2 &lt;- step(object = glm(Survived~., data_train, family = &quot;binomial&quot;),
+                    direction = &quot;backward&quot;)</code></pre>
+<pre><code>## Start:  AIC=804.71
+## Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare
+## 
+##          Df Deviance     AIC
+## - Parch   6   777.98  801.98
+## - Fare    1   770.13  804.13
+## &lt;none&gt;        768.71  804.71
+## - SibSp   6   794.41  818.41
+## - Age     1   789.10  823.10
+## - Pclass  2   817.59  849.59
+## - Sex     1   997.14 1031.14
+## 
+## Step:  AIC=801.98
+## Survived ~ Pclass + Sex + Age + SibSp + Fare
+## 
+##          Df Deviance     AIC
+## - Fare    1   779.24  801.24
+## &lt;none&gt;        777.98  801.98
+## - SibSp   6   805.17  817.17
+## - Age     1   805.91  827.91
+## - Pclass  2   836.86  856.86
+## - Sex     1  1013.15 1035.15
+## 
+## Step:  AIC=801.24
+## Survived ~ Pclass + Sex + Age + SibSp
+## 
+##          Df Deviance     AIC
+## &lt;none&gt;        779.24  801.24
+## - SibSp   6   805.29  815.29
+## - Age     1   808.21  828.21
+## - Pclass  2   880.32  898.32
+## - Sex     1  1020.51 1040.51</code></pre>
+<pre class="r"><code>summary(m2)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Survived ~ Pclass + Sex + Age + SibSp, family = &quot;binomial&quot;, 
+##     data = data_train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.8259  -0.5998  -0.4326   0.6147   2.4463  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)   3.914045   0.406967   9.618  &lt; 2e-16 ***
+## Pclass2      -1.220029   0.264067  -4.620 3.83e-06 ***
+## Pclass3      -2.288869   0.245340  -9.329  &lt; 2e-16 ***
+## Sexmale      -2.708998   0.195246 -13.875  &lt; 2e-16 ***
+## Age          -0.041263   0.008001  -5.157 2.51e-07 ***
+## SibSp1        0.142801   0.210125   0.680  0.49676    
+## SibSp2       -0.142497   0.519745  -0.274  0.78396    
+## SibSp3       -2.073128   0.685422  -3.025  0.00249 ** 
+## SibSp4       -1.668710   0.744919  -2.240  0.02508 *  
+## SibSp5      -16.004773 956.874492  -0.017  0.98666    
+## SibSp8      -15.833751 753.839723  -0.021  0.98324    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 1186.66  on 890  degrees of freedom
+## Residual deviance:  779.24  on 880  degrees of freedom
+## AIC: 801.24
+## 
+## Number of Fisher Scoring iterations: 15</code></pre>
+<pre class="r"><code>data_test$prob &lt;- predict(m2, type = &quot;response&quot;, newdata = data_test)</code></pre>
+<div id="distribution-of-predicted-data" class="section level4">
+<h4>Distribution of predicted data</h4>
+<pre class="r"><code>ggplot(data_test, aes(x=prob)) +
+  geom_density(lwd=0.5) +
+  labs(title = &quot;Distribution of Probability&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<div id="if-the-probability-is-greater-than-0.5-the-label-will-get-1-survived.-if-the-probability-is-lower-than-0.5-the-label-will-get-0-not-survived." class="section level6">
+<h6>If the probability is greater than 0.5, the label will get 1 (survived). If the probability is lower than 0.5, the label will get 0 (not survived).</h6>
+<pre class="r"><code>data_test$pred_label &lt;- factor(ifelse(data_test$prob &gt; 0.5, 1, 0)) #1 = survived, 0 = not survived
+data_test %&gt;% 
+    select(Survived, pred_label) %&gt;% 
+    head()</code></pre>
+<pre><code>##   Survived pred_label
+## 1        0          0
+## 2        1          0
+## 3        0          0
+## 4        0          0
+## 5        1          1
+## 6        0          0</code></pre>
+</div>
+</div>
+<div id="model-evaluation" class="section level2">
+<h2>Model Evaluation</h2>
+<pre class="r"><code>confusionMatrix(reference = as.factor(data_test$Survived), 
+                data = as.factor(data_test$pred_label), positive = &quot;1&quot; )</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction   0   1
+##          0 191   5
+##          1  13 122
+##                                           
+##                Accuracy : 0.9456          
+##                  95% CI : (0.9154, 0.9675)
+##     No Information Rate : 0.6163          
+##     P-Value [Acc &gt; NIR] : &lt; 2e-16         
+##                                           
+##                   Kappa : 0.8864          
+##                                           
+##  Mcnemar&#39;s Test P-Value : 0.09896         
+##                                           
+##             Sensitivity : 0.9606          
+##             Specificity : 0.9363          
+##          Pos Pred Value : 0.9037          
+##          Neg Pred Value : 0.9745          
+##              Prevalence : 0.3837          
+##          Detection Rate : 0.3686          
+##    Detection Prevalence : 0.4079          
+##       Balanced Accuracy : 0.9485          
+##                                           
+##        &#39;Positive&#39; Class : 1               
+## </code></pre>
+</div>
+</div>
