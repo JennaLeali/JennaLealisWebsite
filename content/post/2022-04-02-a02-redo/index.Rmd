@@ -1,0 +1,145 @@
+---
+title: A02 REDO
+author: R package build
+date: '2022-04-02'
+slug: a02-redo
+categories: []
+tags: []
+---
+
+## Summary 
+##### A professor of machine learning is planning to get married to his long-time girlfriend. He has never shopped for diamonds before. In the mall, he was confronted with a dizzying array of diamond characteristics, configurations, and pricing. His quick search revealed that diamonds are primarily characterized by 4C viz. Color, Cut, Carat Weight and Clarity besides Polish, Symmetry, and certification. He scrapped the web to collect information from three different wholesaler websites to build his pricing model to ensure he does not get cheated while purchasing the diamond ring. Build a Linear Regression Model to predict the price of the diamond ring of his interest. 
+
+## Load Library
+```{r}
+library("ggplot2")
+library("dplyr")
+library("finalfit")
+library("memisc")
+```
+
+## Import Data
+```{r}
+professor.proposes.data <- read.csv("https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/Professor_Proposes_Data-3.csv")
+head(professor.proposes.data)
+```
+
+## Summary of Data
+```{r}
+summary(professor.proposes.data)
+```
+
+```{r}
+str(professor.proposes.data)
+```
+
+```{r}
+professor.proposes.data %>% 
+  count(Clarity)
+```
+
+```{r}
+professor.proposes.data %>% 
+  count(Price)
+```
+
+
+##### Range and Interquartile Range of Price 
+```{r}
+professor.proposes.data %>%
+  summarize(max(Price) - min(Price), IQR(Price))
+```
+
+##### Range and Interquartile Range of Carat 
+```{r}
+professor.proposes.data %>%
+  summarize(max(Carat) - min(Carat), IQR(Carat))
+```
+
+##### Looking for Patterns of Missing Data
+```{r}
+explanatory = c("Price", "Carat", 
+  "Polish",  
+  "Cut", "Clarity")
+dependent = "Symmetry"
+
+professor.proposes.data %>% 
+  missing_pattern(dependent, explanatory)
+```
+
+## Histogram and Distribution
+```{r}
+ggplot(professor.proposes.data, aes(x=Price, fill=Clarity)) + geom_histogram()
+```
+
+```{r}
+ggplot(professor.proposes.data, aes(x=Price, color=Cut)) + geom_density()
+```
+
+## Ggplot 
+
+```{r}
+ggplot(professor.proposes.data) + 
+  geom_bar(mapping = aes(x = Cut))
+```
+
+```{r}
+ggplot(data = professor.proposes.data, mapping = aes(x = Price, y = ..density..)) + 
+  geom_freqpoly(mapping = aes(colour = Cut), binwidth = 500)
+```
+
+```{r}
+ggplot(data = professor.proposes.data, mapping = aes(x = Cut, y = Price)) +
+  geom_boxplot()
+```
+
+
+```{r}
+ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point()
+```
+```{r}
+ggplot(data = professor.proposes.data, mapping = aes(x = Carat, y = Price)) + 
+  geom_boxplot(mapping = aes(group = cut_width(Carat, 0.1)))
+```
+
+```{r}
+ggplot(professor.proposes.data, aes(y=Price, x=Carat, color=Clarity, shape=Cut)) + geom_point()
+```
+
+```{r}
+ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point() + geom_smooth()
+```
+
+```{r}
+ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point() + geom_smooth(se=FALSE)
+```
+
+```{r}
+ggplot(professor.proposes.data, aes(y=Price, x=Carat, color=Cut)) + geom_point() + facet_wrap(~ Clarity)
+```
+
+## Linear Model 
+
+```{r}
+m1 <- lm(I(log(Price)) ~ I(Carat^(1/3)), data = professor.proposes.data)
+
+m2 <- update(m1, ~ . + Carat)
+m3 <- update(m2, ~ . + Cut)
+m4 <- update(m3, ~ . + Polish)
+m5 <- update(m4, ~ . + Clarity)
+mtable(m1, m2, m3, m4, m5, sdigits=4)
+```
+
+### Predictions 
+```{r}
+Diamond = data.frame(Carat = 0.92, Cut = "G",
+                         Polish = "G", Clarity="SI2")
+(modelEstimate = predict(m5, newdata = Diamond,
+                        interval="prediction", level = .95) )
+```
+
+```{r}
+exp(modelEstimate)
+```
+
+

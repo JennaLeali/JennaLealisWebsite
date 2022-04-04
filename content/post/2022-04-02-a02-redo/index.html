@@ -1,0 +1,463 @@
+---
+title: A02 REDO
+author: R package build
+date: '2022-04-02'
+slug: a02-redo
+categories: []
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<div id="a-professor-of-machine-learning-is-planning-to-get-married-to-his-long-time-girlfriend.-he-has-never-shopped-for-diamonds-before.-in-the-mall-he-was-confronted-with-a-dizzying-array-of-diamond-characteristics-configurations-and-pricing.-his-quick-search-revealed-that-diamonds-are-primarily-characterized-by-4c-viz.-color-cut-carat-weight-and-clarity-besides-polish-symmetry-and-certification.-he-scrapped-the-web-to-collect-information-from-three-different-wholesaler-websites-to-build-his-pricing-model-to-ensure-he-does-not-get-cheated-while-purchasing-the-diamond-ring.-build-a-linear-regression-model-to-predict-the-price-of-the-diamond-ring-of-his-interest." class="section level5">
+<h5>A professor of machine learning is planning to get married to his long-time girlfriend. He has never shopped for diamonds before. In the mall, he was confronted with a dizzying array of diamond characteristics, configurations, and pricing. His quick search revealed that diamonds are primarily characterized by 4C viz. Color, Cut, Carat Weight and Clarity besides Polish, Symmetry, and certification. He scrapped the web to collect information from three different wholesaler websites to build his pricing model to ensure he does not get cheated while purchasing the diamond ring. Build a Linear Regression Model to predict the price of the diamond ring of his interest.</h5>
+</div>
+</div>
+<div id="load-library" class="section level2">
+<h2>Load Library</h2>
+<pre class="r"><code>library(&quot;ggplot2&quot;)
+library(&quot;dplyr&quot;)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(&quot;finalfit&quot;)
+library(&quot;memisc&quot;)</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## Loading required package: MASS</code></pre>
+<pre><code>## 
+## Attaching package: &#39;MASS&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     select</code></pre>
+<pre><code>## 
+## Attaching package: &#39;memisc&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     collect, recode, rename, syms</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     syms</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     contr.sum, contr.treatment, contrasts</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     as.array</code></pre>
+</div>
+<div id="import-data" class="section level2">
+<h2>Import Data</h2>
+<pre class="r"><code>professor.proposes.data &lt;- read.csv(&quot;https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/Professor_Proposes_Data-3.csv&quot;)
+head(professor.proposes.data)</code></pre>
+<pre><code>##   Carat Colour Clarity Cut Certification Polish Symmetry Price Wholesaler
+## 1  0.92      I     SI2   G           AGS      V        V  3000          1
+## 2  0.92      I     SI2   V           AGS      G        G  3000          1
+## 3  0.82      F     SI2   I           GIA      X        X  3004          1
+## 4  0.81      G     SI1   I           GIA      X        V  3004          1
+## 5  0.90      J     VS2   V           GIA      V        V  3006          1
+## 6  0.87      F     SI2   I           AGS      G        V  3007          1</code></pre>
+</div>
+<div id="summary-of-data" class="section level2">
+<h2>Summary of Data</h2>
+<pre class="r"><code>summary(professor.proposes.data)</code></pre>
+<pre><code>##      Carat           Colour            Clarity              Cut           
+##  Min.   :0.0900   Length:440         Length:440         Length:440        
+##  1st Qu.:0.3000   Class :character   Class :character   Class :character  
+##  Median :0.8100   Mode  :character   Mode  :character   Mode  :character  
+##  Mean   :0.6693                                                           
+##  3rd Qu.:1.0100                                                           
+##  Max.   :1.5800                                                           
+##  Certification         Polish            Symmetry             Price     
+##  Length:440         Length:440         Length:440         Min.   : 160  
+##  Class :character   Class :character   Class :character   1st Qu.: 520  
+##  Mode  :character   Mode  :character   Mode  :character   Median :2169  
+##                                                           Mean   :1717  
+##                                                           3rd Qu.:3012  
+##                                                           Max.   :3145  
+##    Wholesaler   
+##  Min.   :1.000  
+##  1st Qu.:2.000  
+##  Median :2.000  
+##  Mean   :2.318  
+##  3rd Qu.:3.000  
+##  Max.   :3.000</code></pre>
+<pre class="r"><code>str(professor.proposes.data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    440 obs. of  9 variables:
+##  $ Carat        : num  0.92 0.92 0.82 0.81 0.9 0.87 0.8 0.84 0.8 0.8 ...
+##  $ Colour       : chr  &quot;I&quot; &quot;I&quot; &quot;F&quot; &quot;G&quot; ...
+##  $ Clarity      : chr  &quot;SI2&quot; &quot;SI2&quot; &quot;SI2&quot; &quot;SI1&quot; ...
+##  $ Cut          : chr  &quot;G&quot; &quot;V&quot; &quot;I&quot; &quot;I&quot; ...
+##  $ Certification: chr  &quot;AGS&quot; &quot;AGS&quot; &quot;GIA&quot; &quot;GIA&quot; ...
+##  $ Polish       : chr  &quot;V&quot; &quot;G&quot; &quot;X&quot; &quot;X&quot; ...
+##  $ Symmetry     : chr  &quot;V&quot; &quot;G&quot; &quot;X&quot; &quot;V&quot; ...
+##  $ Price        : int  3000 3000 3004 3004 3006 3007 3008 3010 3012 3012 ...
+##  $ Wholesaler   : int  1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<pre class="r"><code>professor.proposes.data %&gt;% 
+  count(Clarity)</code></pre>
+<pre><code>##   Clarity   n
+## 1      I1  82
+## 2      I2  28
+## 3     SI1 116
+## 4     SI2 110
+## 5     SI3  26
+## 6     VS1  30
+## 7     VS2  41
+## 8    VVS1   2
+## 9    VVS2   5</code></pre>
+<pre class="r"><code>professor.proposes.data %&gt;% 
+  count(Price)</code></pre>
+<pre><code>##     Price  n
+## 1     160  6
+## 2     180 11
+## 3     190  5
+## 4     320  2
+## 5     330  6
+## 6     340  6
+## 7     360  5
+## 8     372  1
+## 9     404  1
+## 10    439  1
+## 11    466  7
+## 12    468  1
+## 13    476  7
+## 14    490  1
+## 15    493 14
+## 16    504  3
+## 17    519  3
+## 18    520 54
+## 19    531  5
+## 20    544  2
+## 21    547 51
+## 22    559  4
+## 23    594  1
+## 24    658  2
+## 25    665  1
+## 26   1856  1
+## 27   1892  1
+## 28   1918  1
+## 29   1929  1
+## 30   1966  1
+## 31   1985  1
+## 32   1988  1
+## 33   2031  1
+## 34   2035  1
+## 35   2045  1
+## 36   2049  1
+## 37   2065  1
+## 38   2070  1
+## 39   2100  1
+## 40   2101  1
+## 41   2128  1
+## 42   2149  1
+## 43   2156  1
+## 44   2162  1
+## 45   2168  1
+## 46   2170  1
+## 47   2192  2
+## 48   2195  1
+## 49   2213  1
+## 50   2226  1
+## 51   2228  1
+## 52   2243  1
+## 53   2252  1
+## 54   2263  1
+## 55   2288  1
+## 56   2292  1
+## 57   2301  1
+## 58   2306  1
+## 59   2308  1
+## 60   2310  1
+## 61   2316  1
+## 62   2321  1
+## 63   2330  1
+## 64   2333  1
+## 65   2338  1
+## 66   2351  1
+## 67   2359  1
+## 68   2360  1
+## 69   2363  2
+## 70   2364  1
+## 71   2367  1
+## 72   2368  1
+## 73   2380  2
+## 74   2382  1
+## 75   2386  1
+## 76   2390  1
+## 77   2397  1
+## 78   2413  1
+## 79   2427  1
+## 80   2437  1
+## 81   2438  1
+## 82   2446  1
+## 83   2451  1
+## 84   2452  1
+## 85   2467  1
+## 86   2476  1
+## 87   2486  1
+## 88   2493  1
+## 89   2495  1
+## 90   2511  4
+## 91   2516  1
+## 92   2565  1
+## 93   2574  1
+## 94   2584  1
+## 95   2586  2
+## 96   2591  1
+## 97   2600  2
+## 98   2601  1
+## 99   2607  1
+## 100  2617  1
+## 101  2620  1
+## 102  2625  4
+## 103  2629  1
+## 104  2640  1
+## 105  2651  1
+## 106  2654  1
+## 107  2655  1
+## 108  2660  1
+## 109  2668  1
+## 110  2678  1
+## 111  2682  1
+## 112  2689  2
+## 113  2692  3
+## 114  2693  1
+## 115  2704  1
+## 116  2714  1
+## 117  2716  1
+## 118  2730  1
+## 119  2745  3
+## 120  2757  1
+## 121  2765  1
+## 122  2770  1
+## 123  2772  3
+## 124  2775  1
+## 125  2779  1
+## 126  2780  2
+## 127  3000  2
+## 128  3004  2
+## 129  3006  1
+## 130  3007  1
+## 131  3008  1
+## 132  3010  1
+## 133  3012  2
+## 134  3014  2
+## 135  3015  2
+## 136  3022  1
+## 137  3023  1
+## 138  3027  1
+## 139  3028  1
+## 140  3029  2
+## 141  3031  3
+## 142  3035  1
+## 143  3036  1
+## 144  3038  1
+## 145  3041  2
+## 146  3042  1
+## 147  3043  3
+## 148  3044  2
+## 149  3049  1
+## 150  3051  3
+## 151  3053  2
+## 152  3056  1
+## 153  3057  1
+## 154  3059  1
+## 155  3062  1
+## 156  3064  2
+## 157  3067  1
+## 158  3069  2
+## 159  3071  1
+## 160  3072  1
+## 161  3079  2
+## 162  3080  2
+## 163  3081  2
+## 164  3082  2
+## 165  3083  1
+## 166  3084  1
+## 167  3085  2
+## 168  3086  2
+## 169  3089  3
+## 170  3091  1
+## 171  3093  4
+## 172  3098  1
+## 173  3101  1
+## 174  3102  1
+## 175  3105  1
+## 176  3107  1
+## 177  3108  6
+## 178  3111  2
+## 179  3112  2
+## 180  3114  1
+## 181  3118  1
+## 182  3119  1
+## 183  3122  1
+## 184  3124  2
+## 185  3125  2
+## 186  3126  2
+## 187  3127  2
+## 188  3130  1
+## 189  3135  3
+## 190  3136  1
+## 191  3137  2
+## 192  3138  2
+## 193  3139  7
+## 194  3140  1
+## 195  3141  1
+## 196  3142  1
+## 197  3145  1</code></pre>
+<div id="range-and-interquartile-range-of-price" class="section level5">
+<h5>Range and Interquartile Range of Price</h5>
+<pre class="r"><code>professor.proposes.data %&gt;%
+  summarize(max(Price) - min(Price), IQR(Price))</code></pre>
+<pre><code>##   max(Price) - min(Price) IQR(Price)
+## 1                    2985     2492.5</code></pre>
+</div>
+<div id="range-and-interquartile-range-of-carat" class="section level5">
+<h5>Range and Interquartile Range of Carat</h5>
+<pre class="r"><code>professor.proposes.data %&gt;%
+  summarize(max(Carat) - min(Carat), IQR(Carat))</code></pre>
+<pre><code>##   max(Carat) - min(Carat) IQR(Carat)
+## 1                    1.49       0.71</code></pre>
+</div>
+<div id="looking-for-patterns-of-missing-data" class="section level5">
+<h5>Looking for Patterns of Missing Data</h5>
+<pre class="r"><code>explanatory = c(&quot;Price&quot;, &quot;Carat&quot;, 
+  &quot;Polish&quot;,  
+  &quot;Cut&quot;, &quot;Clarity&quot;)
+dependent = &quot;Symmetry&quot;
+
+professor.proposes.data %&gt;% 
+  missing_pattern(dependent, explanatory)</code></pre>
+<pre><code>##  /\     /\
+## {  `---&#39;  }
+## {  O   O  }
+## ==&gt;  V &lt;==  No need for mice. This data set is completely observed.
+##  \  \|/  /
+##   `-----&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre><code>##     Carat Clarity Cut Polish Symmetry Price  
+## 440     1       1   1      1        1     1 0
+##         0       0   0      0        0     0 0</code></pre>
+</div>
+</div>
+<div id="histogram-and-distribution" class="section level2">
+<h2>Histogram and Distribution</h2>
+<pre class="r"><code>ggplot(professor.proposes.data, aes(x=Price, fill=Clarity)) + geom_histogram()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(professor.proposes.data, aes(x=Price, color=Cut)) + geom_density()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+<div id="ggplot" class="section level2">
+<h2>Ggplot</h2>
+<pre class="r"><code>ggplot(professor.proposes.data) + 
+  geom_bar(mapping = aes(x = Cut))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = professor.proposes.data, mapping = aes(x = Price, y = ..density..)) + 
+  geom_freqpoly(mapping = aes(colour = Cut), binwidth = 500)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = professor.proposes.data, mapping = aes(x = Cut, y = Price)) +
+  geom_boxplot()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = professor.proposes.data, mapping = aes(x = Carat, y = Price)) + 
+  geom_boxplot(mapping = aes(group = cut_width(Carat, 0.1)))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat, color=Clarity, shape=Cut)) + geom_point()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point() + geom_smooth()</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point() + geom_smooth(se=FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat, color=Cut)) + geom_point() + facet_wrap(~ Clarity)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+</div>
+<div id="linear-model" class="section level2">
+<h2>Linear Model</h2>
+<pre class="r"><code>m1 &lt;- lm(I(log(Price)) ~ I(Carat^(1/3)), data = professor.proposes.data)
+
+m2 &lt;- update(m1, ~ . + Carat)
+m3 &lt;- update(m2, ~ . + Cut)
+m4 &lt;- update(m3, ~ . + Polish)
+m5 &lt;- update(m4, ~ . + Clarity)
+mtable(m1, m2, m3, m4, m5, sdigits=4)</code></pre>
+<pre><code>## 
+## Calls:
+## m1: lm(formula = I(log(Price)) ~ I(Carat^(1/3)), data = professor.proposes.data)
+## m2: lm(formula = I(log(Price)) ~ I(Carat^(1/3)) + Carat, data = professor.proposes.data)
+## m3: lm(formula = I(log(Price)) ~ I(Carat^(1/3)) + Carat + Cut, data = professor.proposes.data)
+## m4: lm(formula = I(log(Price)) ~ I(Carat^(1/3)) + Carat + Cut + Polish, 
+##     data = professor.proposes.data)
+## m5: lm(formula = I(log(Price)) ~ I(Carat^(1/3)) + Carat + Cut + Polish + 
+##     Clarity, data = professor.proposes.data)
+## 
+## ==============================================================================
+##                       m1          m2          m3          m4          m5      
+## ------------------------------------------------------------------------------
+##   (Intercept)       3.008***    1.143***    1.195***    1.222***    1.439***  
+##                    (0.047)     (0.169)     (0.165)     (0.181)     (0.154)    
+##   I(Carat^(1/3))    4.883***    8.603***    8.196***    7.760***    6.903***  
+##                    (0.055)     (0.331)     (0.323)     (0.336)     (0.283)    
+##   Carat                        -1.858***   -1.594***   -1.372***   -0.704***  
+##                                (0.163)     (0.162)     (0.169)     (0.145)    
+##   Cut: G/F                                  0.116**     0.106**     0.076**   
+##                                            (0.036)     (0.035)     (0.029)    
+##   Cut: I/F                                  0.184***    0.144***    0.117***  
+##                                            (0.033)     (0.034)     (0.028)    
+##   Cut: V/F                                  0.176***    0.159***    0.123***  
+##                                            (0.034)     (0.034)     (0.028)    
+##   Cut: X/F                                  0.072*      0.052       0.056*    
+##                                            (0.029)     (0.030)     (0.024)    
+##   Polish: G/F                                           0.178*      0.098     
+##                                                        (0.082)     (0.069)    
+##   Polish: I/F                                           0.522***    0.298**   
+##                                                        (0.117)     (0.100)    
+##   Polish: v/F                                           0.554**     0.313     
+##                                                        (0.195)     (0.161)    
+##   Polish: V/F                                           0.221**     0.098     
+##                                                        (0.084)     (0.071)    
+##   Polish: X/F                                           0.231**     0.111     
+##                                                        (0.087)     (0.073)    
+##   Clarity: I2                                                      -0.222***  
+##                                                                    (0.033)    
+##   Clarity: SI1                                                      0.264***  
+##                                                                    (0.028)    
+##   Clarity: SI2                                                      0.249***  
+##                                                                    (0.025)    
+##   Clarity: SI3                                                      0.022     
+##                                                                    (0.034)    
+##   Clarity: VS1                                                      0.296***  
+##                                                                    (0.037)    
+##   Clarity: VS2                                                      0.290***  
+##                                                                    (0.034)    
+##   Clarity: VVS1                                                     0.254*    
+##                                                                    (0.107)    
+##   Clarity: VVS2                                                     0.492***  
+##                                                                    (0.071)    
+## ------------------------------------------------------------------------------
+##   R-squared         0.9471      0.9592      0.9631      0.9654      0.9776    
+##   N               440         440         440         440         440         
+## ==============================================================================
+##   Significance: *** = p &lt; 0.001; ** = p &lt; 0.01; * = p &lt; 0.05</code></pre>
+<div id="predictions" class="section level3">
+<h3>Predictions</h3>
+<pre class="r"><code>Diamond = data.frame(Carat = 0.92, Cut = &quot;G&quot;,
+                         Polish = &quot;G&quot;, Clarity=&quot;SI2&quot;)
+(modelEstimate = predict(m5, newdata = Diamond,
+                        interval=&quot;prediction&quot;, level = .95) )</code></pre>
+<pre><code>##        fit      lwr      upr
+## 1 7.928063 7.640243 8.215883</code></pre>
+<pre class="r"><code>exp(modelEstimate)</code></pre>
+<pre><code>##        fit     lwr      upr
+## 1 2774.049 2080.25 3699.241</code></pre>
+</div>
+</div>
