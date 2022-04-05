@@ -1,0 +1,237 @@
+---
+title: 'P01: Group Project '
+author: R package build
+date: '2022-04-05'
+slug: p01-group-project
+categories: []
+tags: []
+---
+
+## Jenna Leali Project
+
+## Load Library 
+```{r}
+library(plyr)
+library(corrplot)
+library(ggplot2)
+library(gridExtra)
+library(ggthemes)
+library(caret)
+library(MASS)
+library(randomForest)
+library(party)
+```
+
+## Import Data
+```{r}
+bank.churn <- read.csv("https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/Bank_Churn.csv")
+```
+
+## Summary of Data
+```{r}
+summary(bank.churn)
+```
+
+```{r}
+head(bank.churn)
+```
+
+```{r}
+str(bank.churn)
+```
+
+## Remove Rows with Missing Values 
+```{r}
+sapply(bank.churn, function(x) sum(is.na(x)))
+```
+
+```{r}
+bank.churn <- bank.churn[complete.cases(bank.churn), ]
+```
+
+## Data Wrangling 
+#### Change the values in columns “HasCrCard”, "IsActiveMember", and "Exited" from 0 or 1 to “No” or “Yes”
+```{r}
+bank.churn$HasCrCard <- as.factor(mapvalues(bank.churn$HasCrCard,
+                                      from=c("0","1"),
+                                      to=c("No", "Yes")))
+```
+
+```{r}
+bank.churn$IsActiveMember <- as.factor(mapvalues(bank.churn$IsActiveMember,
+                                      from=c("0","1"),
+                                      to=c("No", "Yes")))
+```
+
+```{r}
+bank.churn$Exited <- as.factor(mapvalues(bank.churn$Exited,
+                                      from=c("0","1"),
+                                      to=c("No", "Yes")))
+```
+
+#### Group Tenure by Years
+```{r}
+min(bank.churn$Tenure); max(bank.churn$Tenure)
+```
+
+```{r}
+group_tenure <- function(Tenure){
+    if (Tenure >= 0 & Tenure <= 2){
+        return('0-2 Years')
+    }else if(Tenure > 2 & Tenure <= 4){
+        return('2-4 Years')
+    }else if (Tenure > 4 & Tenure <= 6){
+        return('4-6 Years')
+    }else if (Tenure > 6 & Tenure <=8){
+        return('6-8 Years')
+    }else if (Tenure > 8){
+        return('> 8 Years')
+    }
+}
+
+bank.churn$tenure_group <- sapply(bank.churn$Tenure,group_tenure)
+bank.churn$tenure_group <- as.factor(bank.churn$tenure_group)
+```
+
+
+#### Remove columns not needed for analysis
+
+```{r}
+bank.churn$customerID <- NULL
+bank.churn$tenure <- NULL
+```
+
+## Exploratory Data Analysis 
+#### Bar plots of categorical variables 
+```{r}
+p1 <- ggplot(bank.churn, aes(x=Gender)) + ggtitle("Gender") + xlab("Gender") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p2 <- ggplot(bank.churn, aes(x=Geography)) + ggtitle("Geography") + xlab("Geography") + 
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p3 <- ggplot(bank.churn, aes(x=HasCrCard)) + ggtitle("Has Credit Card") + xlab("Has Credit Card") + 
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p4 <- ggplot(bank.churn, aes(x=IsActiveMember)) + ggtitle("Is Active Member") + xlab("Is Active Member") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p5 <- ggplot(bank.churn, aes(x=Exited)) + ggtitle("Has Closed Account") + xlab("Has Closed Account") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p6 <- ggplot(bank.churn, aes(x=tenure_group)) + ggtitle("Tenure Group") + xlab("Tenure Group") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+grid.arrange(p1, p2, p3, p4, p5, p6, ncol=3)
+```
+
+## Balance the dataset before modeling
+#### Load Library 
+```{r}
+library(ggplot2)
+library(knitr)
+suppressMessages(library(dplyr))
+suppressMessages(library(unbalanced))
+```
+
+#### Intial look at the data 
+##### Converted exited to factor
+```{r}
+bank.churn$Class<-as.factor(bank.churn$Exited) 
+levels(bank.churn$Exited) <- c('Loyal', 'Closed') 
+summary(bank.churn$Exited)
+```
+##### Plotting number of samples in each class
+```{r}
+options(scipen=10000) 
+
+ggplot(data = bank.churn, aes(fill = Exited)) +
+    geom_bar(aes(x = Exited))+
+    ggtitle("Has customer closed the bank account or a loyal customer", subtitle = "Original dataset")+
+    xlab("")+
+    ylab("Samples")+
+    scale_y_continuous(expand = c(0,0))+
+    scale_x_discrete(expand = c(0,0))+
+    theme(legend.position = "none", 
+         legend.title = element_blank(),
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+```
+##### Scatter plot of orginal dataset (NEEDS WORK)
+```{r}
+ggplot(data = bank.churn, aes(x = Tenure, y = CustomerId, colour = Exited))+
+  geom_point()+
+    ggtitle("Original dataset")+
+    xlab("V4")+
+    ylab("V7")+
+    geom_point() +
+    xlim(-5, 15)+
+    ylim(-50, 50)+
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank(), 
+          legend.key=element_blank())
+```
+
+##### Seperating the data into the predictor variable and the response variable (MAY NOT BE 13)
+```{r}
+predictor_variables <- bank.churn[,-13] 
+response_variable <- bank.churn$Exited   
+```
+
+##### Minority case must be have the factor level of 1, default has it coded as 0
+```{r}
+levels(response_variable) <- c('0', '1')
+```
+
+### Run undersampled function
+```{r}
+undersampled_data <- ubBalance(predictor_variables, 
+                               response_variable, 
+                               type='ubUnder',         
+                               verbose = TRUE)
+```
+```{r}
+undersampled_combined <- cbind(undersampled_data$X,    
+                               undersampled_data$Y)
+
+names(undersampled_combined)[names(undersampled_combined) == "undersampled_data$Y"] <- "Exited" 
+levels(undersampled_combined$Exited) <- c('Loyal', 'Closed')
+```
+
+##### Plot number of cases in undersampled dataset 
+```{r}
+ggplot(data = undersampled_combined, aes(fill = Exited))+
+    geom_bar(aes(x = Exited))+
+    ggtitle("Number customer who closed the bank account or remained a loyal customer after undersampling", 
+            subtitle="Total samples: 4074")+
+     xlab("")+
+     ylab("Samples")+
+     scale_y_continuous(expand = c(0,0))+
+     scale_x_discrete(expand = c(0,0))+
+     theme(legend.position = "none", 
+           legend.title = element_blank(),
+           panel.grid.major = element_blank(),
+           panel.grid.minor = element_blank(),
+           panel.background = element_blank())
+```
+##### Scatter plot of undersampled data (NEED TO FIX WHAT GOES ON X AND Y)
+```{r}
+ggplot(data = undersampled_combined, aes(x = Tenure, y = CustomerId, colour = Exited))+
+  geom_point()+
+    ggtitle("Undersampled dataset")+
+    xlab("V4")+
+    ylab("V7")+
+    xlim(-5, 15)+
+    ylim(-50, 50)+
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank(), 
+          legend.key=element_blank())
+```
+
+
+## Build a Logistic Regression model
+##### Fitting the logistic regression model 
+
+
+
+
+
+
+
