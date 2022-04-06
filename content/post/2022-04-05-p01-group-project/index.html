@@ -10,49 +10,21 @@ tags: []
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
-<div id="jenna-leali-project" class="section level2">
-<h2>Jenna Leali Project</h2>
-</div>
+<p style="color:green">
+Jenna Leali, Ariely Burgos, Rachel Kavalakatt, Wesnahika Charles!
+</p>
 <div id="load-library" class="section level2">
 <h2>Load Library</h2>
-<pre class="r"><code>library(plyr)
-library(corrplot)</code></pre>
-<pre><code>## corrplot 0.92 loaded</code></pre>
-<pre class="r"><code>library(ggplot2)
-library(gridExtra)
-library(ggthemes)
-library(caret)</code></pre>
-<pre><code>## Loading required package: lattice</code></pre>
-<pre class="r"><code>library(MASS)
-library(randomForest)</code></pre>
-<pre><code>## randomForest 4.7-1</code></pre>
-<pre><code>## Type rfNews() to see new features/changes/bug fixes.</code></pre>
-<pre><code>## 
-## Attaching package: &#39;randomForest&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:gridExtra&#39;:
-## 
-##     combine</code></pre>
-<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
-## 
-##     margin</code></pre>
-<pre class="r"><code>library(party)</code></pre>
-<pre><code>## Loading required package: grid</code></pre>
-<pre><code>## Loading required package: mvtnorm</code></pre>
-<pre><code>## Loading required package: modeltools</code></pre>
-<pre><code>## Loading required package: stats4</code></pre>
-<pre><code>## 
-## Attaching package: &#39;modeltools&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:plyr&#39;:
-## 
-##     empty</code></pre>
-<pre><code>## Loading required package: strucchange</code></pre>
-<pre><code>## Loading required package: zoo</code></pre>
-<pre><code>## 
-## Attaching package: &#39;zoo&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     as.Date, as.Date.numeric</code></pre>
-<pre><code>## Loading required package: sandwich</code></pre>
+<pre class="r"><code>suppressPackageStartupMessages(library(plyr))
+suppressPackageStartupMessages(library(corrplot))
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(gridExtra))
+suppressPackageStartupMessages(library(ggthemes))
+suppressPackageStartupMessages(library(caret))
+suppressPackageStartupMessages(library(MASS))
+suppressPackageStartupMessages(library(randomForest))
+suppressPackageStartupMessages(library(party))
+suppressPackageStartupMessages(library(rmdformats))</code></pre>
 </div>
 <div id="import-data" class="section level2">
 <h2>Import Data</h2>
@@ -104,21 +76,29 @@ library(randomForest)</code></pre>
 ## 4             2         0              0        93826.63      0
 ## 5             1         1              1        79084.10      0
 ## 6             2         1              0       149756.71      1</code></pre>
-<pre class="r"><code>str(bank.churn)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    10000 obs. of  13 variables:
-##  $ RowNumber      : int  1 2 3 4 5 6 7 8 9 10 ...
-##  $ CustomerId     : int  15634602 15647311 15619304 15701354 15737888 15574012 15592531 15656148 15792365 15592389 ...
-##  $ CreditScore    : int  619 608 502 699 850 645 822 376 501 684 ...
-##  $ Geography      : chr  &quot;France&quot; &quot;Spain&quot; &quot;France&quot; &quot;France&quot; ...
-##  $ Gender         : chr  &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; ...
-##  $ Age            : int  42 41 42 39 43 44 50 29 44 27 ...
-##  $ Tenure         : int  2 1 8 1 2 8 7 4 4 2 ...
-##  $ Balance        : num  0 83808 159661 0 125511 ...
-##  $ NumOfProducts  : int  1 1 3 2 1 2 2 4 2 1 ...
-##  $ HasCrCard      : int  1 0 1 0 1 1 1 1 0 1 ...
-##  $ IsActiveMember : int  1 1 0 0 1 0 1 0 1 1 ...
-##  $ EstimatedSalary: num  101349 112543 113932 93827 79084 ...
-##  $ Exited         : int  1 0 1 0 0 1 0 1 0 0 ...</code></pre>
+</div>
+<div id="explanation-of-content" class="section level2">
+<h2>Explanation of Content</h2>
+<ul>
+<li>CustomerId: - contains random values and has no effect on customer leaving the bank</li>
+<li>CreditScore: a customer with a higher credit score is less likely to leave the bank</li>
+<li>Geography: customer’s location can affect their decision to leave the bank</li>
+<li>Gender: explore whether gender plays a role in a customer leaving the bank</li>
+<li>Age: older customers are less likely to leave their bank than younger ones</li>
+<li>Tenure: number of years that the customer has been a client of the bank</li>
+<li>Balance: good indicator of customer churn, as people with a higher balance in their accounts are less likely to leave the bank</li>
+<li>NumOfProducts: number of products that a customer has purchased through the bank</li>
+<li>HasCrCard: people with a credit card are less likely to leave the bank</li>
+<li>IsActiveMember: active customers are less likely to leave the bank</li>
+<li>EstimatedSalary: people with lower salaries are more likely to leave the bank</li>
+<li>Exited: Has customer closed the bank account or a loyal customer</li>
+</ul>
+<p style="color:red">
+Churn Prediction: predicting which clients are most likely to cancel a subscription or leave a company based on their usage of the service!
+</p>
+<p style="color:orange">
+Independent variables contain information about customers. Dependent variable refers to customer abandonment. Data consists of 10000 observations and 12 variables!
+</p>
 </div>
 <div id="remove-rows-with-missing-values" class="section level2">
 <h2>Remove Rows with Missing Values</h2>
@@ -169,8 +149,7 @@ bank.churn$tenure_group &lt;- as.factor(bank.churn$tenure_group)</code></pre>
 </div>
 <div id="remove-columns-not-needed-for-analysis" class="section level4">
 <h4>Remove columns not needed for analysis</h4>
-<pre class="r"><code>bank.churn$customerID &lt;- NULL
-bank.churn$tenure &lt;- NULL</code></pre>
+<pre class="r"><code>bank.churn$customerID &lt;- NULL</code></pre>
 </div>
 </div>
 <div id="exploratory-data-analysis" class="section level2">
@@ -190,7 +169,7 @@ p5 &lt;- ggplot(bank.churn, aes(x=Exited)) + ggtitle(&quot;Has Closed Account&qu
 p6 &lt;- ggplot(bank.churn, aes(x=tenure_group)) + ggtitle(&quot;Tenure Group&quot;) + xlab(&quot;Tenure Group&quot;) +
   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_minimal()
 grid.arrange(p1, p2, p3, p4, p5, p6, ncol=3)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 </div>
 </div>
 <div id="balance-the-dataset-before-modeling" class="section level2">
@@ -228,7 +207,7 @@ ggplot(data = bank.churn, aes(fill = Exited)) +
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
          panel.background = element_blank())</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-17-1.png" width="672" />
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" />
 ##### Scatter plot of orginal dataset (NEEDS WORK)</p>
 <pre class="r"><code>ggplot(data = bank.churn, aes(x = Tenure, y = CustomerId, colour = Exited))+
   geom_point()+
@@ -244,7 +223,7 @@ ggplot(data = bank.churn, aes(fill = Exited)) +
           legend.key=element_blank())</code></pre>
 <pre><code>## Warning: Removed 10000 rows containing missing values (geom_point).
 ## Removed 10000 rows containing missing values (geom_point).</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 </div>
 <div id="seperating-the-data-into-the-predictor-variable-and-the-response-variable-may-not-be-13" class="section level5">
 <h5>Seperating the data into the predictor variable and the response variable (MAY NOT BE 13)</h5>
@@ -283,7 +262,7 @@ levels(undersampled_combined$Exited) &lt;- c(&#39;Loyal&#39;, &#39;Closed&#39;)<
            panel.grid.major = element_blank(),
            panel.grid.minor = element_blank(),
            panel.background = element_blank())</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" />
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-22-1.png" width="672" />
 ##### Scatter plot of undersampled data (NEED TO FIX WHAT GOES ON X AND Y)</p>
 <pre class="r"><code>ggplot(data = undersampled_combined, aes(x = Tenure, y = CustomerId, colour = Exited))+
   geom_point()+
@@ -297,7 +276,7 @@ levels(undersampled_combined$Exited) &lt;- c(&#39;Loyal&#39;, &#39;Closed&#39;)<
           panel.background = element_blank(), 
           legend.key=element_blank())</code></pre>
 <pre><code>## Warning: Removed 4074 rows containing missing values (geom_point).</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 </div>
 </div>
 </div>
