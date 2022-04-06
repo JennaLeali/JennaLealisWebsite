@@ -38,7 +38,6 @@ summary(bank.churn)
 head(bank.churn)
 ```
 
-
 ## Explanation of Content
 + CustomerId: - contains random values and has no effect on customer leaving the bank
 + CreditScore: a customer with a higher credit score is less likely to leave the bank
@@ -52,6 +51,7 @@ head(bank.churn)
 + IsActiveMember: active customers are less likely to leave the bank
 + EstimatedSalary:  people with lower salaries are more likely to leave the bank 
 + Exited: Has customer closed the bank account or a loyal customer 
+
 
 <p style="color:red">Churn Prediction: predicting which clients are most likely to cancel a subscription or leave a company based on their usage of the service!</p>
 
@@ -121,17 +121,17 @@ bank.churn$customerID <- NULL
 #### Bar plots of categorical variables 
 ```{r}
 p1 <- ggplot(bank.churn, aes(x=Gender)) + ggtitle("Gender") + xlab("Gender") +
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
 p2 <- ggplot(bank.churn, aes(x=Geography)) + ggtitle("Geography") + xlab("Geography") + 
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
 p3 <- ggplot(bank.churn, aes(x=HasCrCard)) + ggtitle("Has Credit Card") + xlab("Has Credit Card") + 
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
 p4 <- ggplot(bank.churn, aes(x=IsActiveMember)) + ggtitle("Is Active Member") + xlab("Is Active Member") +
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
 p5 <- ggplot(bank.churn, aes(x=Exited)) + ggtitle("Has Closed Account") + xlab("Has Closed Account") +
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
 p6 <- ggplot(bank.churn, aes(x=tenure_group)) + ggtitle("Tenure Group") + xlab("Tenure Group") +
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
 grid.arrange(p1, p2, p3, p4, p5, p6, ncol=3)
 ```
 

@@ -157,17 +157,17 @@ bank.churn$tenure_group &lt;- as.factor(bank.churn$tenure_group)</code></pre>
 <div id="bar-plots-of-categorical-variables" class="section level4">
 <h4>Bar plots of categorical variables</h4>
 <pre class="r"><code>p1 &lt;- ggplot(bank.churn, aes(x=Gender)) + ggtitle(&quot;Gender&quot;) + xlab(&quot;Gender&quot;) +
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_minimal()
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
 p2 &lt;- ggplot(bank.churn, aes(x=Geography)) + ggtitle(&quot;Geography&quot;) + xlab(&quot;Geography&quot;) + 
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_minimal()
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
 p3 &lt;- ggplot(bank.churn, aes(x=HasCrCard)) + ggtitle(&quot;Has Credit Card&quot;) + xlab(&quot;Has Credit Card&quot;) + 
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_minimal()
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
 p4 &lt;- ggplot(bank.churn, aes(x=IsActiveMember)) + ggtitle(&quot;Is Active Member&quot;) + xlab(&quot;Is Active Member&quot;) +
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_minimal()
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
 p5 &lt;- ggplot(bank.churn, aes(x=Exited)) + ggtitle(&quot;Has Closed Account&quot;) + xlab(&quot;Has Closed Account&quot;) +
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_minimal()
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
 p6 &lt;- ggplot(bank.churn, aes(x=tenure_group)) + ggtitle(&quot;Tenure Group&quot;) + xlab(&quot;Tenure Group&quot;) +
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_minimal()
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
 grid.arrange(p1, p2, p3, p4, p5, p6, ncol=3)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 </div>
