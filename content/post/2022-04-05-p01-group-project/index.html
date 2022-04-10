@@ -389,8 +389,11 @@ z[1]/sum(z)</code></pre>
 </div>
 <div id="fitting-the-logistic-regression-model" class="section level2">
 <h2>Fitting the logistic regression model</h2>
-<div id="train-a-logistic-regression-model-using-tenure-as-the-independent-variable.-what-is-the-coefficient-of-tenure" class="section level5">
-<h5>Train a logistic regression model using tenure as the independent variable. What is the coefficient of tenure?</h5>
+<div id="exploring-data" class="section level4">
+<h4>Exploring Data</h4>
+</div>
+<div id="train-a-logistic-regression-model-using-tenure-as-the-independent-variable.-what-is-the-coefficient-of-tenure" class="section level4">
+<h4>Train a logistic regression model using tenure as the independent variable. What is the coefficient of tenure?</h4>
 <pre class="r"><code>ChurnLog = glm(Exited ~ Tenure,  data=train, family=binomial)
 summary(ChurnLog)</code></pre>
 <pre><code>## 
@@ -419,6 +422,250 @@ summary(ChurnLog)</code></pre>
 <div id="tenure--0.00811" class="section level4">
 <h4>Tenure = -0.00811</h4>
 </div>
+<div id="train-a-logistic-regression-model-using-age-as-the-independent-variable.-what-is-the-coefficient-of-age" class="section level4">
+<h4>Train a logistic regression model using Age as the independent variable. What is the coefficient of Age?</h4>
+<pre class="r"><code>ChurnLog = glm(Exited ~ Age,  data=train, family=binomial)
+summary(ChurnLog)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Age, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.9439  -0.6620  -0.5371  -0.4197   2.4078  
+## 
+## Coefficients:
+##              Estimate Std. Error z value            Pr(&gt;|z|)    
+## (Intercept) -4.016511   0.125013  -32.13 &lt;0.0000000000000002 ***
+## Age          0.065249   0.002875   22.69 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 7077.1  on 6999  degrees of freedom
+## Residual deviance: 6521.9  on 6998  degrees of freedom
+## AIC: 6525.9
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<div id="train-a-logistic-regression-model-using-geography-as-the-independent-variable.-what-is-the-coefficient-of-geography" class="section level4">
+<h4>Train a logistic regression model using Geography as the independent variable. What is the coefficient of Geography?</h4>
+<pre class="r"><code>ChurnLog = glm(Exited ~ Geography,  data=train, family=binomial)
+summary(ChurnLog)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Geography, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8916  -0.6018  -0.6018  -0.5825   1.9275  
+## 
+## Coefficients:
+##                  Estimate Std. Error z value            Pr(&gt;|z|)    
+## (Intercept)      -1.61693    0.04526 -35.723 &lt;0.0000000000000002 ***
+## GeographyGermany  0.89960    0.06819  13.192 &lt;0.0000000000000002 ***
+## GeographySpain   -0.07112    0.08033  -0.885               0.376    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 7077.1  on 6999  degrees of freedom
+## Residual deviance: 6871.0  on 6997  degrees of freedom
+## AIC: 6877
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<div id="train-a-logistic-regression-model-using-gender-as-the-independent-variable.-what-is-the-coefficient-of-gender" class="section level4">
+<h4>Train a logistic regression model using Gender as the independent variable. What is the coefficient of Gender?</h4>
+<pre class="r"><code>ChurnLog = glm(Exited ~ Gender,  data=train, family=binomial)
+summary(ChurnLog)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Gender, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.7571  -0.7571  -0.6016  -0.6016   1.8966  
+## 
+## Coefficients:
+##             Estimate Std. Error z value            Pr(&gt;|z|)    
+## (Intercept) -1.10279    0.04091 -26.959 &lt;0.0000000000000002 ***
+## GenderMale  -0.51487    0.05980  -8.611 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 7077.1  on 6999  degrees of freedom
+## Residual deviance: 7002.4  on 6998  degrees of freedom
+## AIC: 7006.4
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<div id="train-a-logistic-regression-model-using-numofproducts-as-the-independent-variable.-what-is-the-coefficient-of-numofproducts" class="section level4">
+<h4>Train a logistic regression model using NumOfProducts as the independent variable. What is the coefficient of NumOfProducts?</h4>
+<pre class="r"><code>ChurnLog = glm(Exited ~ NumOfProducts,  data=train, family=binomial)
+summary(ChurnLog)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ NumOfProducts, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.7144  -0.7144  -0.6376  -0.6376   2.0619  
+## 
+## Coefficients:
+##               Estimate Std. Error z value             Pr(&gt;|z|)    
+## (Intercept)   -0.98112    0.08421  -11.65 &lt; 0.0000000000000002 ***
+## NumOfProducts -0.25435    0.05332   -4.77           0.00000184 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 7077.1  on 6999  degrees of freedom
+## Residual deviance: 7053.8  on 6998  degrees of freedom
+## AIC: 7057.8
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<div id="train-a-logistic-regression-model-using-hascrcard-as-the-independent-variable.-what-is-the-coefficient-of-hascrcard" class="section level4">
+<h4>Train a logistic regression model using HasCrCard as the independent variable. What is the coefficient of HasCrCard?</h4>
+<pre class="r"><code>ChurnLog = glm(Exited ~ HasCrCard,  data=train, family=binomial)
+summary(ChurnLog)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ HasCrCard, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.6895  -0.6688  -0.6688  -0.6688   1.7930  
+## 
+## Coefficients:
+##              Estimate Std. Error z value            Pr(&gt;|z|)    
+## (Intercept)  -1.31534    0.05381 -24.443 &lt;0.0000000000000002 ***
+## HasCrCardYes -0.06842    0.06451  -1.061               0.289    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 7077.1  on 6999  degrees of freedom
+## Residual deviance: 7076.0  on 6998  degrees of freedom
+## AIC: 7080
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<div id="train-a-logistic-regression-model-using-isactivemember-as-the-independent-variable.-what-is-the-coefficient-of-isactivemember" class="section level4">
+<h4>Train a logistic regression model using IsActiveMember as the independent variable. What is the coefficient of IsActiveMember?</h4>
+<pre class="r"><code>ChurnLog = glm(Exited ~ IsActiveMember,  data=train, family=binomial)
+summary(ChurnLog)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ IsActiveMember, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.7850  -0.7850  -0.5644  -0.5644   1.9574  
+## 
+## Coefficients:
+##                   Estimate Std. Error z value            Pr(&gt;|z|)    
+## (Intercept)       -1.01944    0.03912  -26.06 &lt;0.0000000000000002 ***
+## IsActiveMemberYes -0.73694    0.06095  -12.09 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 7077.1  on 6999  degrees of freedom
+## Residual deviance: 6926.6  on 6998  degrees of freedom
+## AIC: 6930.6
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<div id="train-a-logistic-regression-model-using-estimatedsalary-as-the-independent-variable.-what-is-the-coefficient-of-estimatedsalary" class="section level4">
+<h4>Train a logistic regression model using EstimatedSalary as the independent variable. What is the coefficient of EstimatedSalary?</h4>
+<pre class="r"><code>ChurnLog = glm(Exited ~ EstimatedSalary,  data=train, family=binomial)
+summary(ChurnLog)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ EstimatedSalary, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.6911  -0.6808  -0.6709  -0.6606   1.8080  
+## 
+## Coefficients:
+##                      Estimate    Std. Error z value            Pr(&gt;|z|)    
+## (Intercept)     -1.4174603145  0.0602080135  -23.54 &lt;0.0000000000000002 ***
+## EstimatedSalary  0.0000005364  0.0000005155    1.04               0.298    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 7077.1  on 6999  degrees of freedom
+## Residual deviance: 7076.0  on 6998  degrees of freedom
+## AIC: 7080
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<div id="train-a-logistic-regression-model-using-balance-as-the-independent-variable.-what-is-the-coefficient-of-balance" class="section level4">
+<h4>Train a logistic regression model using Balance as the independent variable. What is the coefficient of Balance?</h4>
+<pre class="r"><code>ChurnLog = glm(Exited ~ Balance,  data=train, family=binomial)
+summary(ChurnLog)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Balance, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8714  -0.7268  -0.5718  -0.5718   1.9451  
+## 
+## Coefficients:
+##                  Estimate    Std. Error z value            Pr(&gt;|z|)    
+## (Intercept) -1.7283376472  0.0520860883 -33.182 &lt;0.0000000000000002 ***
+## Balance      0.0000044585  0.0000004907   9.085 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 7077.1  on 6999  degrees of freedom
+## Residual deviance: 6992.2  on 6998  degrees of freedom
+## AIC: 6996.2
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<div id="train-a-logistic-regression-model-using-creditscore-as-the-independent-variable.-what-is-the-coefficient-of-creditscore" class="section level4">
+<h4>Train a logistic regression model using CreditScore as the independent variable. What is the coefficient of CreditScore?</h4>
+<pre class="r"><code>ChurnLog = glm(Exited ~ CreditScore,  data=train, family=binomial)
+summary(ChurnLog)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ CreditScore, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.7266  -0.6845  -0.6674  -0.6431   1.8448  
+## 
+## Coefficients:
+##               Estimate Std. Error z value  Pr(&gt;|z|)    
+## (Intercept) -0.9209167  0.1994712  -4.617 0.0000039 ***
+## CreditScore -0.0006817  0.0003049  -2.236    0.0254 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 7077.1  on 6999  degrees of freedom
+## Residual deviance: 7072.1  on 6998  degrees of freedom
+## AIC: 7076.1
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</div>
 <div id="using-logistic-regression-model-obtain-predictions-on-the-test-set.-then-using-a-probability-threshold-of-0.5-create-a-confusion-matrix-for-the-test-set.-what-is-the-accuracy-of-logistic-regression-model" class="section level4">
 <h4>Using logistic regression model, obtain predictions on the test set. Then, using a probability threshold of 0.5, create a confusion matrix for the test set. What is the accuracy of logistic regression model?</h4>
 <pre class="r"><code>predictTrain = predict(ChurnLog, newdata = test, type=&quot;response&quot;)
@@ -433,56 +680,112 @@ sum(diag(z))/sum(z)</code></pre>
 </div>
 <div id="accuracy-0.7963333" class="section level4">
 <h4>Accuracy = 0.7963333</h4>
-<pre class="r"><code>mylogit &lt;- glm(Exited ~ EstimatedSalary + Balance + CreditScore, data = bank.churn, family = &quot;binomial&quot;)</code></pre>
+</div>
+<div id="explore-all-variables" class="section level4">
+<h4>Explore all variables</h4>
+<pre class="r"><code>mylogit &lt;- glm(Exited ~ Age + Tenure + Geography + Gender + NumOfProducts + HasCrCard + IsActiveMember + EstimatedSalary + Balance + CreditScore, data = bank.churn, family = &quot;binomial&quot;)</code></pre>
 <pre class="r"><code>summary(mylogit)</code></pre>
 <pre><code>## 
 ## Call:
-## glm(formula = Exited ~ EstimatedSalary + Balance + CreditScore, 
-##     family = &quot;binomial&quot;, data = bank.churn)
+## glm(formula = Exited ~ Age + Tenure + Geography + Gender + NumOfProducts + 
+##     HasCrCard + IsActiveMember + EstimatedSalary + Balance + 
+##     CreditScore, family = &quot;binomial&quot;, data = bank.churn)
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
-## -0.9593  -0.7280  -0.5949  -0.5420   2.0427  
+## -2.3097  -0.6589  -0.4560  -0.2697   2.9940  
 ## 
 ## Coefficients:
-##                      Estimate    Std. Error z value             Pr(&gt;|z|)    
-## (Intercept)     -1.3401319938  0.1779054092  -7.533   0.0000000000000497 ***
-## EstimatedSalary  0.0000004647  0.0000004355   1.067              0.28591    
-## Balance          0.0000048571  0.0000004129  11.764 &lt; 0.0000000000000002 ***
-## CreditScore     -0.0007223024  0.0002584294  -2.795              0.00519 ** 
+##                        Estimate    Std. Error z value             Pr(&gt;|z|)    
+## (Intercept)       -3.3922808732  0.2448080818 -13.857 &lt; 0.0000000000000002 ***
+## Age                0.0727060072  0.0025755067  28.230 &lt; 0.0000000000000002 ***
+## Tenure            -0.0159491082  0.0093548658  -1.705               0.0882 .  
+## GeographyGermany   0.7747143917  0.0676740012  11.448 &lt; 0.0000000000000002 ***
+## GeographySpain     0.0352177714  0.0706379173   0.499               0.6181    
+## GenderMale        -0.5284827562  0.0544883681  -9.699 &lt; 0.0000000000000002 ***
+## NumOfProducts     -0.1015226594  0.0471342196  -2.154               0.0312 *  
+## HasCrCardYes      -0.0446763922  0.0593395190  -0.753               0.4515    
+## IsActiveMemberYes -1.0754437635  0.0576856079 -18.643 &lt; 0.0000000000000002 ***
+## EstimatedSalary    0.0000004807  0.0000004737   1.015               0.3102    
+## Balance            0.0000026371  0.0000005142   5.128          0.000000292 ***
+## CreditScore       -0.0006683290  0.0002803445  -2.384               0.0171 *  
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 10110  on 9999  degrees of freedom
-## Residual deviance:  9958  on 9996  degrees of freedom
-## AIC: 9966
+##     Null deviance: 10109.8  on 9999  degrees of freedom
+## Residual deviance:  8561.4  on 9988  degrees of freedom
+## AIC: 8585.4
 ## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-<pre class="r"><code>confint(mylogit)</code></pre>
+## Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+<div id="from-the-results-of-the-test-we-can-see-that-age-geography-gender-isactivemember-and-balance-are-the-most-important-variables-when-it-comes-to-predicting-bank-churn.the-prz-column-represents-the-absolute-value-of-the-z-value-associated-with-each-of-the-predictor-variables.-because-the-values-for-age-geography-gender-isactivemember-and-balance-is-less-than-0.05-this-indicates-that-these-predictor-variables-have-a-statistically-significant-relationship-with-the-response-variable-in-our-model-and-are-the-most-important-church-predictors.-thus-these-are-the-variables-we-will-include-in-our-logistic-regression-model." class="section level4">
+<h4>From the results of the Test, we can see that Age, Geography, Gender, IsActiveMember, and Balance are the most important variables when it comes to predicting bank churn.The Pr(&gt;|z|) column represents the absolute value of the z-value associated with each of the predictor variables. Because the values for Age, Geography, Gender, IsActiveMember, and Balance is less than 0.05, this indicates that these predictor variables have a statistically significant relationship with the response variable in our model and are the most important church predictors. Thus these are the variables we will include in our logistic regression model.</h4>
+<pre class="r"><code>mylogit2 &lt;- glm(Exited ~ Age + Geography + Gender + IsActiveMember + Balance, data = bank.churn, family = &quot;binomial&quot;)</code></pre>
+<pre class="r"><code>summary(mylogit2)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Age + Geography + Gender + IsActiveMember + 
+##     Balance, family = &quot;binomial&quot;, data = bank.churn)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.3499  -0.6582  -0.4552  -0.2701   2.9570  
+## 
+## Coefficients:
+##                        Estimate    Std. Error z value             Pr(&gt;|z|)    
+## (Intercept)       -4.0656406224  0.1211549015 -33.557 &lt; 0.0000000000000002 ***
+## Age                0.0728256599  0.0025727765  28.306 &lt; 0.0000000000000002 ***
+## GeographyGermany   0.7550057575  0.0671423148  11.245 &lt; 0.0000000000000002 ***
+## GeographySpain     0.0330561195  0.0705857349   0.468                 0.64    
+## GenderMale        -0.5268153598  0.0544059581  -9.683 &lt; 0.0000000000000002 ***
+## IsActiveMemberYes -1.0777216531  0.0575815981 -18.716 &lt; 0.0000000000000002 ***
+## Balance            0.0000029518  0.0000004942   5.972        0.00000000234 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 10109.8  on 9999  degrees of freedom
+## Residual deviance:  8576.3  on 9993  degrees of freedom
+## AIC: 8590.3
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<pre class="r"><code>confint(mylogit2)</code></pre>
 <pre><code>## Waiting for profiling to be done...</code></pre>
-<pre><code>##                            2.5 %          97.5 %
-## (Intercept)     -1.6896027532888 -0.992156252195
-## EstimatedSalary -0.0000003887368  0.000001318577
-## Balance          0.0000040504867  0.000005669168
-## CreditScore     -0.0012289883088 -0.000215859971</code></pre>
-<pre class="r"><code>confint.default(mylogit)</code></pre>
-<pre><code>##                           2.5 %          97.5 %
-## (Intercept)     -1.688820188616 -0.991443799081
-## EstimatedSalary -0.000000388827  0.000001318314
-## Balance          0.000004047874  0.000005666359
-## CreditScore     -0.001228814710 -0.000215790076</code></pre>
-<pre class="r"><code>exp(coef(mylogit))</code></pre>
-<pre><code>##     (Intercept) EstimatedSalary         Balance     CreditScore 
-##       0.2618111       1.0000005       1.0000049       0.9992780</code></pre>
-<pre class="r"><code>exp(cbind(OR = coef(mylogit), confint(mylogit)))</code></pre>
+<pre><code>##                             2.5 %          97.5 %
+## (Intercept)       -4.304692927612 -3.829712640709
+## Age                0.067808900636  0.077895564975
+## GeographyGermany   0.623582162415  0.886808829388
+## GeographySpain    -0.105878476475  0.170870571172
+## GenderMale        -0.633607696107 -0.420315912484
+## IsActiveMemberYes -1.191140937870 -0.965393784585
+## Balance            0.000001983295  0.000003920944</code></pre>
+<pre class="r"><code>confint.default(mylogit2)</code></pre>
+<pre><code>##                             2.5 %          97.5 %
+## (Intercept)       -4.303099865990 -3.828181378815
+## Age                0.067783110532  0.077868209253
+## GeographyGermany   0.623409238608  0.886602276385
+## GeographySpain    -0.105289378630  0.171401617633
+## GenderMale        -0.633449078138 -0.420181641376
+## IsActiveMemberYes -1.190579511490 -0.964863794747
+## Balance            0.000001983106  0.000003920452</code></pre>
+<pre class="r"><code>exp(coef(mylogit2))</code></pre>
+<pre><code>##       (Intercept)               Age  GeographyGermany    GeographySpain 
+##         0.0171520         1.0755430         2.1276238         1.0336085 
+##        GenderMale IsActiveMemberYes           Balance 
+##         0.5904825         0.3403701         1.0000030</code></pre>
+<pre class="r"><code>exp(cbind(OR = coef(mylogit2), confint(mylogit2)))</code></pre>
 <pre><code>## Waiting for profiling to be done...</code></pre>
-<pre><code>##                        OR     2.5 %    97.5 %
-## (Intercept)     0.2618111 0.1845928 0.3707763
-## EstimatedSalary 1.0000005 0.9999996 1.0000013
-## Balance         1.0000049 1.0000041 1.0000057
-## CreditScore     0.9992780 0.9987718 0.9997842</code></pre>
+<pre><code>##                          OR      2.5 %     97.5 %
+## (Intercept)       0.0171520 0.01350503 0.02171585
+## Age               1.0755430 1.07016078 1.08100976
+## GeographyGermany  2.1276238 1.86559897 2.42737112
+## GeographySpain    1.0336085 0.89953396 1.18633719
+## GenderMale        0.5904825 0.53067383 0.65683928
+## IsActiveMemberYes 0.3403701 0.30387436 0.38083320
+## Balance           1.0000030 1.00000198 1.00000392</code></pre>
 </div>
 </div>
 <div id="log-transformation" class="section level2">
@@ -496,17 +799,88 @@ sum(diag(z))/sum(z)</code></pre>
 <pre class="r"><code>ggplot(data = bank.churn, aes(Age)) +
 geom_histogram()</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
 <pre class="r"><code>skewness(bank.churn$Age)</code></pre>
 <pre><code>## [1] 1.011017</code></pre>
 <pre class="r"><code>log_age &lt;- log10(bank.churn$Age)</code></pre>
 <pre class="r"><code>ggplot(data = bank.churn, aes(log_age)) +
 geom_histogram()</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-62-1.png" width="672" /></p>
 </div>
 <div id="evaluation-three-different-models" class="section level2">
 <h2>Evaluation (three different models)</h2>
+<div id="three-stars" class="section level4">
+<h4>Three Stars</h4>
+<pre class="r"><code>mylogit2 &lt;- glm(Exited ~ Age + Geography + Gender + IsActiveMember + Balance, data = bank.churn, family = &quot;binomial&quot;)</code></pre>
+<pre class="r"><code>summary(mylogit2)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Age + Geography + Gender + IsActiveMember + 
+##     Balance, family = &quot;binomial&quot;, data = bank.churn)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.3499  -0.6582  -0.4552  -0.2701   2.9570  
+## 
+## Coefficients:
+##                        Estimate    Std. Error z value             Pr(&gt;|z|)    
+## (Intercept)       -4.0656406224  0.1211549015 -33.557 &lt; 0.0000000000000002 ***
+## Age                0.0728256599  0.0025727765  28.306 &lt; 0.0000000000000002 ***
+## GeographyGermany   0.7550057575  0.0671423148  11.245 &lt; 0.0000000000000002 ***
+## GeographySpain     0.0330561195  0.0705857349   0.468                 0.64    
+## GenderMale        -0.5268153598  0.0544059581  -9.683 &lt; 0.0000000000000002 ***
+## IsActiveMemberYes -1.0777216531  0.0575815981 -18.716 &lt; 0.0000000000000002 ***
+## Balance            0.0000029518  0.0000004942   5.972        0.00000000234 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 10109.8  on 9999  degrees of freedom
+## Residual deviance:  8576.3  on 9993  degrees of freedom
+## AIC: 8590.3
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+<div id="one-star-and-above" class="section level4">
+<h4>One Star and Above</h4>
+<pre class="r"><code>mylogit3 &lt;- glm(Exited ~ Age + Geography + Gender + IsActiveMember + Balance + CreditScore + NumOfProducts, data = bank.churn, family = &quot;binomial&quot;)</code></pre>
+<pre class="r"><code>summary(mylogit3)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Age + Geography + Gender + IsActiveMember + 
+##     Balance + CreditScore + NumOfProducts, family = &quot;binomial&quot;, 
+##     data = bank.churn)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.3328  -0.6572  -0.4556  -0.2700   2.9714  
+## 
+## Coefficients:
+##                        Estimate    Std. Error z value             Pr(&gt;|z|)    
+## (Intercept)       -3.4552651291  0.2315179085 -14.924 &lt; 0.0000000000000002 ***
+## Age                0.0726706980  0.0025742784  28.230 &lt; 0.0000000000000002 ***
+## GeographyGermany   0.7730874080  0.0676489273  11.428 &lt; 0.0000000000000002 ***
+## GeographySpain     0.0366278168  0.0706083554   0.519               0.6039    
+## GenderMale        -0.5307045436  0.0544666623  -9.744 &lt; 0.0000000000000002 ***
+## IsActiveMemberYes -1.0720688679  0.0576175293 -18.607 &lt; 0.0000000000000002 ***
+## Balance            0.0000026515  0.0000005139   5.160          0.000000247 ***
+## CreditScore       -0.0006678803  0.0002802600  -2.383               0.0172 *  
+## NumOfProducts     -0.1012291940  0.0470983813  -2.149               0.0316 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 10109.8  on 9999  degrees of freedom
+## Residual deviance:  8565.9  on 9991  degrees of freedom
+## AIC: 8583.9
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+<div id="anova-test" class="section level4">
+<h4>Anova Test</h4>
 <pre class="r"><code>log.model1 &lt;- lm(log_age~Tenure, data = bank.churn)
 log.model2 &lt;-lm(log_age~Tenure + Gender, data = bank.churn)
 log.model3 &lt;- lm(log_age~Tenure + Gender + Balance, data = bank.churn)</code></pre>
@@ -540,4 +914,5 @@ log.model3 &lt;- lm(log_age~Tenure + Gender + Balance, data = bank.churn)</code>
 ## 2   9996 125.69  2   0.21284 8.4632 0.0002126 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
 </div>

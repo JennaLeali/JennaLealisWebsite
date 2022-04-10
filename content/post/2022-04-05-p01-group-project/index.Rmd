@@ -313,13 +313,63 @@ z[1]/sum(z)
 #### False Positive Rate = .203667
 ## Build a Logistic Regression model
 
-## Fitting the logistic regression model 
-##### Train a logistic regression model using tenure as the independent variable. What is the coefficient of tenure?
+## Fitting the logistic regression model
+#### Exploring Data
+#### Train a logistic regression model using tenure as the independent variable. What is the coefficient of tenure?
 ```{r}
 ChurnLog = glm(Exited ~ Tenure,  data=train, family=binomial)
 summary(ChurnLog)
 ```
 #### Tenure = -0.00811
+#### Train a logistic regression model using Age as the independent variable. What is the coefficient of Age?
+```{r}
+ChurnLog = glm(Exited ~ Age,  data=train, family=binomial)
+summary(ChurnLog)
+```
+#### Train a logistic regression model using Geography as the independent variable. What is the coefficient of Geography?
+```{r}
+ChurnLog = glm(Exited ~ Geography,  data=train, family=binomial)
+summary(ChurnLog)
+```
+#### Train a logistic regression model using Gender as the independent variable. What is the coefficient of Gender?
+```{r}
+ChurnLog = glm(Exited ~ Gender,  data=train, family=binomial)
+summary(ChurnLog)
+```
+#### Train a logistic regression model using NumOfProducts as the independent variable. What is the coefficient of NumOfProducts?
+```{r}
+ChurnLog = glm(Exited ~ NumOfProducts,  data=train, family=binomial)
+summary(ChurnLog)
+```
+#### Train a logistic regression model using HasCrCard as the independent variable. What is the coefficient of HasCrCard?
+```{r}
+ChurnLog = glm(Exited ~ HasCrCard,  data=train, family=binomial)
+summary(ChurnLog)
+```
+#### Train a logistic regression model using IsActiveMember as the independent variable. What is the coefficient of IsActiveMember?
+```{r}
+ChurnLog = glm(Exited ~ IsActiveMember,  data=train, family=binomial)
+summary(ChurnLog)
+```
+#### Train a logistic regression model using EstimatedSalary as the independent variable. What is the coefficient of EstimatedSalary?
+```{r}
+ChurnLog = glm(Exited ~ EstimatedSalary,  data=train, family=binomial)
+summary(ChurnLog)
+```
+#### Train a logistic regression model using Balance as the independent variable. What is the coefficient of Balance?
+```{r}
+ChurnLog = glm(Exited ~ Balance,  data=train, family=binomial)
+summary(ChurnLog)
+```
+#### Train a logistic regression model using CreditScore as the independent variable. What is the coefficient of CreditScore?
+```{r}
+ChurnLog = glm(Exited ~ CreditScore,  data=train, family=binomial)
+summary(ChurnLog)
+```
+
+
+
+
 #### Using logistic regression model, obtain predictions on the test set. Then, using a probability threshold of 0.5, create a confusion matrix for the test set. What is the accuracy of logistic regression model?
 ```{r}
 predictTrain = predict(ChurnLog, newdata = test, type="response")
@@ -329,25 +379,37 @@ sum(diag(z))/sum(z)
 ```
 #### Accuracy = 0.7963333
 
+#### Explore all variables 
 ```{r}
-mylogit <- glm(Exited ~ EstimatedSalary + Balance + CreditScore, data = bank.churn, family = "binomial")
+mylogit <- glm(Exited ~ Age + Tenure + Geography + Gender + NumOfProducts + HasCrCard + IsActiveMember + EstimatedSalary + Balance + CreditScore, data = bank.churn, family = "binomial")
 ```
 
 ```{r}
 summary(mylogit)
 ```
 
+#### From the results of the Test, we can see that Age, Geography, Gender, IsActiveMember, and Balance are the most important variables when it comes to predicting bank churn.The Pr(>|z|) column represents the absolute value of the z-value associated with each of the predictor variables. Because the values for Age, Geography, Gender, IsActiveMember, and Balance is less than 0.05, this indicates that these predictor variables have a statistically significant relationship with the response variable in our model and are the most important church predictors. Thus these are the variables we will include in our logistic regression model.
+
 ```{r}
-confint(mylogit)
+mylogit2 <- glm(Exited ~ Age + Geography + Gender + IsActiveMember + Balance, data = bank.churn, family = "binomial")
+```
+
+```{r}
+summary(mylogit2)
+```
+
+
+```{r}
+confint(mylogit2)
 ```
 ```{r}
-confint.default(mylogit)
+confint.default(mylogit2)
 ```
 ```{r}
-exp(coef(mylogit))
+exp(coef(mylogit2))
 ```
 ```{r}
-exp(cbind(OR = coef(mylogit), confint(mylogit)))
+exp(cbind(OR = coef(mylogit2), confint(mylogit2)))
 ```
 
 
@@ -375,6 +437,24 @@ geom_histogram()
 ```
 
 ## Evaluation (three different models)
+#### Three Stars
+```{r}
+mylogit2 <- glm(Exited ~ Age + Geography + Gender + IsActiveMember + Balance, data = bank.churn, family = "binomial")
+```
+```{r}
+summary(mylogit2)
+```
+
+#### One Star and Above 
+```{r}
+mylogit3 <- glm(Exited ~ Age + Geography + Gender + IsActiveMember + Balance + CreditScore + NumOfProducts, data = bank.churn, family = "binomial")
+```
+```{r}
+summary(mylogit3)
+```
+
+
+#### Anova Test
 ```{r}
 log.model1 <- lm(log_age~Tenure, data = bank.churn)
 log.model2 <-lm(log_age~Tenure + Gender, data = bank.churn)
