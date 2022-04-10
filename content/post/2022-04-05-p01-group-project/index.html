@@ -24,7 +24,8 @@ suppressPackageStartupMessages(library(caret))
 suppressPackageStartupMessages(library(MASS))
 suppressPackageStartupMessages(library(randomForest))
 suppressPackageStartupMessages(library(party))
-suppressPackageStartupMessages(library(rmdformats))</code></pre>
+suppressPackageStartupMessages(library(rmdformats))
+suppressPackageStartupMessages(library(dplyr))</code></pre>
 </div>
 <div id="import-data" class="section level2">
 <h2>Import Data</h2>
@@ -76,6 +77,22 @@ suppressPackageStartupMessages(library(rmdformats))</code></pre>
 ## 4             2         0              0        93826.63      0
 ## 5             1         1              1        79084.10      0
 ## 6             2         1              0       149756.71      1</code></pre>
+<pre class="r"><code>glimpse(bank.churn)</code></pre>
+<pre><code>## Rows: 10,000
+## Columns: 13
+## $ RowNumber       &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,…
+## $ CustomerId      &lt;int&gt; 15634602, 15647311, 15619304, 15701354, 15737888, 1557…
+## $ CreditScore     &lt;int&gt; 619, 608, 502, 699, 850, 645, 822, 376, 501, 684, 528,…
+## $ Geography       &lt;chr&gt; &quot;France&quot;, &quot;Spain&quot;, &quot;France&quot;, &quot;France&quot;, &quot;Spain&quot;, &quot;Spain…
+## $ Gender          &lt;chr&gt; &quot;Female&quot;, &quot;Female&quot;, &quot;Female&quot;, &quot;Female&quot;, &quot;Female&quot;, &quot;Mal…
+## $ Age             &lt;int&gt; 42, 41, 42, 39, 43, 44, 50, 29, 44, 27, 31, 24, 34, 25…
+## $ Tenure          &lt;int&gt; 2, 1, 8, 1, 2, 8, 7, 4, 4, 2, 6, 3, 10, 5, 7, 3, 1, 9,…
+## $ Balance         &lt;dbl&gt; 0.00, 83807.86, 159660.80, 0.00, 125510.82, 113755.78,…
+## $ NumOfProducts   &lt;int&gt; 1, 1, 3, 2, 1, 2, 2, 4, 2, 1, 2, 2, 2, 2, 2, 2, 1, 2, …
+## $ HasCrCard       &lt;int&gt; 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, …
+## $ IsActiveMember  &lt;int&gt; 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, …
+## $ EstimatedSalary &lt;dbl&gt; 101348.88, 112542.58, 113931.57, 93826.63, 79084.10, 1…
+## $ Exited          &lt;int&gt; 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, …</code></pre>
 </div>
 <div id="explanation-of-content" class="section level2">
 <h2>Explanation of Content</h2>
@@ -93,7 +110,7 @@ suppressPackageStartupMessages(library(rmdformats))</code></pre>
 <li>EstimatedSalary: people with lower salaries are more likely to leave the bank</li>
 <li>Exited: Has customer closed the bank account or a loyal customer</li>
 </ul>
-<p style="color:red">
+<p style="color:lightblue">
 Churn Prediction: predicting which clients are most likely to cancel a subscription or leave a company based on their usage of the service!
 </p>
 <p style="color:orange">
@@ -154,6 +171,81 @@ bank.churn$tenure_group &lt;- as.factor(bank.churn$tenure_group)</code></pre>
 </div>
 <div id="exploratory-data-analysis" class="section level2">
 <h2>Exploratory Data Analysis</h2>
+<div id="how-many-customers-churned" class="section level4">
+<h4>How many customers churned?</h4>
+<pre class="r"><code>table(bank.churn$Exited)</code></pre>
+<pre><code>## 
+##   No  Yes 
+## 7963 2037</code></pre>
+</div>
+<div id="customers-have-churned" class="section level4">
+<h4>2037 customers have churned</h4>
+</div>
+<div id="what-is-the-most-common-geographical-location" class="section level3">
+<h3>What is the most common geographical location?</h3>
+<pre class="r"><code>table(bank.churn$Geography)</code></pre>
+<pre><code>## 
+##  France Germany   Spain 
+##    5014    2509    2477</code></pre>
+<div id="france-is-the-most-common-geographical-location" class="section level4">
+<h4>France is the most common geographical location</h4>
+</div>
+<div id="what-is-the-mean-age-amongst-female-customers" class="section level4">
+<h4>What is the mean age amongst female customers?</h4>
+<pre class="r"><code>tapply(bank.churn$Age, bank.churn$Gender ==&quot;Female&quot;, mean)</code></pre>
+<pre><code>##    FALSE     TRUE 
+## 38.65824 39.23839</code></pre>
+</div>
+<div id="is-the-mean-age-amoungst-female-customers" class="section level4">
+<h4>39 is the mean age amoungst female customers</h4>
+</div>
+<div id="what-is-the-mean-age-amongst-male-customers" class="section level4">
+<h4>What is the mean age amongst male customers?</h4>
+<pre class="r"><code>tapply(bank.churn$Age, bank.churn$Gender ==&quot;Male&quot;, mean)</code></pre>
+<pre><code>##    FALSE     TRUE 
+## 39.23839 38.65824</code></pre>
+</div>
+<div id="is-the-mean-age-amoungst-male-customers" class="section level4">
+<h4>38 is the mean age amoungst male customers</h4>
+</div>
+<div id="visualising-distributions" class="section level4">
+<h4>Visualising distributions</h4>
+<pre class="r"><code>ggplot(data = bank.churn) +
+  geom_bar(mapping = aes(x = Exited))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<pre class="r"><code>bank.churn %&gt;% 
+  count(Exited)</code></pre>
+<pre><code>##   Exited    n
+## 1     No 7963
+## 2    Yes 2037</code></pre>
+</div>
+<div id="continuous-variable-estimated-salary-histogram" class="section level4">
+<h4>Continuous Variable (Estimated Salary) Histogram</h4>
+<pre class="r"><code>ggplot(data = bank.churn) +
+  geom_histogram(mapping = aes(x = EstimatedSalary), binwidth = 0.9)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+</div>
+<div id="explore-a-variety-of-binwidths-to-reveal-different-patterns" class="section level4">
+<h4>Explore a variety of binwidths to reveal different patterns</h4>
+<pre class="r"><code>smaller &lt;- bank.churn %&gt;% 
+  filter(EstimatedSalary &lt; 50000)
+  
+ggplot(data = smaller, mapping = aes(x = EstimatedSalary)) +
+  geom_histogram(binwidth = 0.1)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = smaller, mapping = aes(x = CreditScore, colour = Exited)) +
+  geom_freqpoly(binwidth = 4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = smaller, mapping = aes(x = EstimatedSalary, colour = Exited)) +
+  geom_freqpoly(binwidth = 4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = smaller, mapping = aes(x = Balance, colour = Exited)) +
+  geom_freqpoly(binwidth = .5)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = bank.churn, mapping = aes(x = EstimatedSalary)) + 
+  geom_histogram(binwidth = 3)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+</div>
 <div id="bar-plots-of-categorical-variables" class="section level4">
 <h4>Bar plots of categorical variables</h4>
 <pre class="r"><code>p1 &lt;- ggplot(bank.churn, aes(x=Gender)) + ggtitle(&quot;Gender&quot;) + xlab(&quot;Gender&quot;) +
@@ -169,7 +261,8 @@ p5 &lt;- ggplot(bank.churn, aes(x=Exited)) + ggtitle(&quot;Has Closed Account&qu
 p6 &lt;- ggplot(bank.churn, aes(x=tenure_group)) + ggtitle(&quot;Tenure Group&quot;) + xlab(&quot;Tenure Group&quot;) +
   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
 grid.arrange(p1, p2, p3, p4, p5, p6, ncol=3)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+</div>
 </div>
 </div>
 <div id="balance-the-dataset-before-modeling" class="section level2">
@@ -207,48 +300,33 @@ ggplot(data = bank.churn, aes(fill = Exited)) +
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
          panel.background = element_blank())</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" />
-##### Scatter plot of orginal dataset (NEEDS WORK)</p>
-<pre class="r"><code>ggplot(data = bank.churn, aes(x = Tenure, y = CustomerId, colour = Exited))+
-  geom_point()+
-    ggtitle(&quot;Original dataset&quot;)+
-    xlab(&quot;V4&quot;)+
-    ylab(&quot;V7&quot;)+
-    geom_point() +
-    xlim(-5, 15)+
-    ylim(-50, 50)+
-    theme(panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          panel.background = element_blank(), 
-          legend.key=element_blank())</code></pre>
-<pre><code>## Warning: Removed 10000 rows containing missing values (geom_point).
-## Removed 10000 rows containing missing values (geom_point).</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 </div>
-<div id="seperating-the-data-into-the-predictor-variable-and-the-response-variable-may-not-be-13" class="section level5">
-<h5>Seperating the data into the predictor variable and the response variable (MAY NOT BE 13)</h5>
+</div>
+<div id="seperating-the-data-into-the-predictor-variable-and-the-response-variable" class="section level4">
+<h4>Seperating the data into the predictor variable and the response variable</h4>
 <pre class="r"><code>predictor_variables &lt;- bank.churn[,-13] 
-response_variable &lt;- bank.churn$Exited   </code></pre>
+response_variable &lt;- bank.churn$Exited </code></pre>
 </div>
-<div id="minority-case-must-be-have-the-factor-level-of-1-default-has-it-coded-as-0" class="section level5">
-<h5>Minority case must be have the factor level of 1, default has it coded as 0</h5>
-<pre class="r"><code>levels(response_variable) &lt;- c(&#39;0&#39;, &#39;1&#39;)</code></pre>
+<div id="minority-case-must-have-the-facotr-level-of-1-default-has-it-coded-as-0" class="section level4">
+<h4>Minority case must have the facotr level of 1, default has it coded as 0</h4>
+<pre class="r"><code>levels(train) &lt;- c(&#39;0&#39;, &#39;1&#39;)</code></pre>
 </div>
-</div>
-<div id="run-undersampled-function" class="section level3">
-<h3>Run undersampled function</h3>
+<div id="run-undersampled-function" class="section level4">
+<h4>Run undersampled function</h4>
 <pre class="r"><code>undersampled_data &lt;- ubBalance(predictor_variables, 
                                response_variable, 
                                type=&#39;ubUnder&#39;,         
                                verbose = TRUE)</code></pre>
-<pre><code>## Proportion of positives after ubUnder : 50 % of 4074 observations</code></pre>
+<pre><code>## Warning: No positive instances, skip balance</code></pre>
 <pre class="r"><code>undersampled_combined &lt;- cbind(undersampled_data$X,    
                                undersampled_data$Y)
 
 names(undersampled_combined)[names(undersampled_combined) == &quot;undersampled_data$Y&quot;] &lt;- &quot;Exited&quot; 
 levels(undersampled_combined$Exited) &lt;- c(&#39;Loyal&#39;, &#39;Closed&#39;)</code></pre>
-<div id="plot-number-of-cases-in-undersampled-dataset" class="section level5">
-<h5>Plot number of cases in undersampled dataset</h5>
+</div>
+<div id="plot-number-of-cases-in-undersampled-dataset" class="section level4">
+<h4>Plot number of cases in undersampled dataset</h4>
 <pre class="r"><code>ggplot(data = undersampled_combined, aes(fill = Exited))+
     geom_bar(aes(x = Exited))+
     ggtitle(&quot;Number customer who closed the bank account or remained a loyal customer after undersampling&quot;, 
@@ -262,27 +340,103 @@ levels(undersampled_combined$Exited) &lt;- c(&#39;Loyal&#39;, &#39;Closed&#39;)<
            panel.grid.major = element_blank(),
            panel.grid.minor = element_blank(),
            panel.background = element_blank())</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-22-1.png" width="672" />
-##### Scatter plot of undersampled data (NEED TO FIX WHAT GOES ON X AND Y)</p>
-<pre class="r"><code>ggplot(data = undersampled_combined, aes(x = Tenure, y = CustomerId, colour = Exited))+
-  geom_point()+
-    ggtitle(&quot;Undersampled dataset&quot;)+
-    xlab(&quot;V4&quot;)+
-    ylab(&quot;V7&quot;)+
-    xlim(-5, 15)+
-    ylim(-50, 50)+
-    theme(panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          panel.background = element_blank(), 
-          legend.key=element_blank())</code></pre>
-<pre><code>## Warning: Removed 4074 rows containing missing values (geom_point).</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+</div>
+<div id="set-your-random-seed-to-1-and-create-a-training-and-test-split-using-the-sample.split-function-in-the-catools-library-with-70-of-the-observations-in-the-training-set-and-30-in-the-testing-set" class="section level4">
+<h4>Set your random seed to 1 and create a training and test split using the sample.split() function in the caTools library, with 70% of the observations in the training set and 30% in the testing set</h4>
+<pre class="r"><code>set.seed(1)
+library(caTools)
+split = sample.split(bank.churn$Exited, SplitRatio = 0.7)
+train = subset(bank.churn, split ==TRUE)
+test = subset(bank.churn, split == FALSE)</code></pre>
+</div>
+<div id="sample.split-balances-the-dependent-variable-between-the-training-and-testing-sets" class="section level4">
+<h4>sample.split() balances the dependent variable between the training and testing sets</h4>
+</div>
+<div id="what-is-the-test-accuracy-of-this-baseline-model" class="section level4">
+<h4>What is the (test) accuracy of this baseline model?</h4>
+<pre class="r"><code>z = table(test$Exited)
+z[1]/sum(z)</code></pre>
+<pre><code>##     Loyal 
+## 0.7963333</code></pre>
+</div>
+<div id="accuracy-.7963333" class="section level4">
+<h4>Accuracy = .7963333</h4>
+</div>
+<div id="what-is-the-test-true-positive-rate-of-this-baseline-model" class="section level4">
+<h4>What is the (test) true positive rate of this baseline model?</h4>
+<pre class="r"><code>z = table (test$Exited)
+z[2]/sum(z)</code></pre>
+<pre><code>##    Closed 
+## 0.2036667</code></pre>
+</div>
+<div id="true-positive-rate-.796333" class="section level4">
+<h4>True Positive Rate = .796333</h4>
+</div>
+<div id="what-is-the-test-false-positive-rate-of-this-baseline-model" class="section level4">
+<h4>What is the (test) false positive rate of this baseline model?</h4>
+<pre class="r"><code>z = table (test$Exited)
+z[1]/sum(z)</code></pre>
+<pre><code>##     Loyal 
+## 0.7963333</code></pre>
+</div>
+<div id="false-positive-rate-.203667" class="section level4">
+<h4>False Positive Rate = .203667</h4>
 </div>
 </div>
+<div id="log-transformation" class="section level2">
+<h2>Log Transformation</h2>
+<pre class="r"><code>library(e1071)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;e1071&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:mlr&#39;:
+## 
+##     impute</code></pre>
+<pre class="r"><code>ggplot(data = bank.churn, aes(Age)) +
+geom_histogram()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+<pre class="r"><code>skewness(bank.churn$Age)</code></pre>
+<pre><code>## [1] 1.011017</code></pre>
+<pre class="r"><code>log_age &lt;- log10(bank.churn$Age)</code></pre>
+<pre class="r"><code>ggplot(data = bank.churn, aes(log_age)) +
+geom_histogram()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
 </div>
-<div id="build-a-logistic-regression-model" class="section level2">
-<h2>Build a Logistic Regression model</h2>
-<div id="fitting-the-logistic-regression-model" class="section level5">
-<h5>Fitting the logistic regression model</h5>
-</div>
+<div id="evaluation-three-different-models" class="section level2">
+<h2>Evaluation (three different models)</h2>
+<pre class="r"><code>log.model1 &lt;- lm(log_age~Tenure, data = bank.churn)
+log.model2 &lt;-lm(log_age~Tenure + Gender, data = bank.churn)
+log.model3 &lt;- lm(log_age~Tenure + Gender + Balance, data = bank.churn)</code></pre>
+<pre class="r"><code>anova(log.model1 ,log.model2)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: log_age ~ Tenure
+## Model 2: log_age ~ Tenure + Gender
+##   Res.Df    RSS Df Sum of Sq      F   Pr(&gt;F)   
+## 1   9998 125.91                                
+## 2   9997 125.81  1  0.093391 7.4207 0.006459 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>anova(log.model2,log.model3)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: log_age ~ Tenure + Gender
+## Model 2: log_age ~ Tenure + Gender + Balance
+##   Res.Df    RSS Df Sum of Sq      F   Pr(&gt;F)   
+## 1   9997 125.81                                
+## 2   9996 125.69  1   0.11945 9.4994 0.002061 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>anova(log.model1, log.model3)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: log_age ~ Tenure
+## Model 2: log_age ~ Tenure + Gender + Balance
+##   Res.Df    RSS Df Sum of Sq      F    Pr(&gt;F)    
+## 1   9998 125.91                                  
+## 2   9996 125.69  2   0.21284 8.4632 0.0002126 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>

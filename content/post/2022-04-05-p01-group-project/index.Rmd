@@ -22,6 +22,7 @@ suppressPackageStartupMessages(library(MASS))
 suppressPackageStartupMessages(library(randomForest))
 suppressPackageStartupMessages(library(party))
 suppressPackageStartupMessages(library(rmdformats))
+suppressPackageStartupMessages(library(dplyr))
 ```
 
 ## Import Data
@@ -36,6 +37,9 @@ summary(bank.churn)
 
 ```{r}
 head(bank.churn)
+```
+```{r}
+glimpse(bank.churn)
 ```
 
 ## Explanation of Content
@@ -53,7 +57,7 @@ head(bank.churn)
 + Exited: Has customer closed the bank account or a loyal customer 
 
 
-<p style="color:red">Churn Prediction: predicting which clients are most likely to cancel a subscription or leave a company based on their usage of the service!</p>
+<p style="color:lightblue">Churn Prediction: predicting which clients are most likely to cancel a subscription or leave a company based on their usage of the service!</p>
 
 <p style="color:orange">Independent variables contain information about customers. Dependent variable refers to customer abandonment. Data consists of 10000 observations and 12 variables!</p>
 
@@ -117,8 +121,73 @@ bank.churn$tenure_group <- as.factor(bank.churn$tenure_group)
 bank.churn$customerID <- NULL
 ```
 
+
+
 ## Exploratory Data Analysis 
+#### How many customers churned?
+```{r}
+table(bank.churn$Exited)
+```
+#### 2037 customers have churned
+### What is the most common geographical location?
+```{r}
+table(bank.churn$Geography)
+```
+#### France is the most common geographical location
+#### What is the mean age amongst female customers?
+```{r}
+tapply(bank.churn$Age, bank.churn$Gender =="Female", mean)
+```
+#### 39 is the mean age amoungst female customers 
+#### What is the mean age amongst male customers?
+```{r}
+tapply(bank.churn$Age, bank.churn$Gender =="Male", mean)
+```
+#### 38 is the mean age amoungst male customers 
+
+#### Visualising distributions 
+```{r}
+ggplot(data = bank.churn) +
+  geom_bar(mapping = aes(x = Exited))
+```
+```{r}
+bank.churn %>% 
+  count(Exited)
+```
+#### Continuous Variable (Estimated Salary) Histogram
+```{r}
+ggplot(data = bank.churn) +
+  geom_histogram(mapping = aes(x = EstimatedSalary), binwidth = 0.9)
+```
+
+#### Explore a variety of binwidths to reveal different patterns 
+```{r}
+smaller <- bank.churn %>% 
+  filter(EstimatedSalary < 50000)
+  
+ggplot(data = smaller, mapping = aes(x = EstimatedSalary)) +
+  geom_histogram(binwidth = 0.1)
+```
+
+```{r}
+ggplot(data = smaller, mapping = aes(x = CreditScore, colour = Exited)) +
+  geom_freqpoly(binwidth = 4)
+```
+```{r}
+ggplot(data = smaller, mapping = aes(x = EstimatedSalary, colour = Exited)) +
+  geom_freqpoly(binwidth = 4)
+```
+```{r}
+ggplot(data = smaller, mapping = aes(x = Balance, colour = Exited)) +
+  geom_freqpoly(binwidth = .5)
+```
+```{r}
+ggplot(data = bank.churn, mapping = aes(x = EstimatedSalary)) + 
+  geom_histogram(binwidth = 3)
+```
+
 #### Bar plots of categorical variables 
+
 ```{r}
 p1 <- ggplot(bank.churn, aes(x=Gender)) + ggtitle("Gender") + xlab("Gender") +
   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
@@ -134,6 +203,8 @@ p6 <- ggplot(bank.churn, aes(x=tenure_group)) + ggtitle("Tenure Group") + xlab("
   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
 grid.arrange(p1, p2, p3, p4, p5, p6, ncol=3)
 ```
+
+
 
 ## Balance the dataset before modeling
 #### Load Library 
@@ -168,34 +239,19 @@ ggplot(data = bank.churn, aes(fill = Exited)) +
          panel.grid.minor = element_blank(),
          panel.background = element_blank())
 ```
-##### Scatter plot of orginal dataset (NEEDS WORK)
-```{r}
-ggplot(data = bank.churn, aes(x = Tenure, y = CustomerId, colour = Exited))+
-  geom_point()+
-    ggtitle("Original dataset")+
-    xlab("V4")+
-    ylab("V7")+
-    geom_point() +
-    xlim(-5, 15)+
-    ylim(-50, 50)+
-    theme(panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          panel.background = element_blank(), 
-          legend.key=element_blank())
-```
 
-##### Seperating the data into the predictor variable and the response variable (MAY NOT BE 13)
+#### Seperating the data into the predictor variable and the response variable 
 ```{r}
 predictor_variables <- bank.churn[,-13] 
-response_variable <- bank.churn$Exited   
+response_variable <- bank.churn$Exited 
 ```
 
-##### Minority case must be have the factor level of 1, default has it coded as 0
+#### Minority case must have the facotr level of 1, default has it coded as 0
 ```{r}
-levels(response_variable) <- c('0', '1')
+levels(train) <- c('0', '1')
 ```
 
-### Run undersampled function
+#### Run undersampled function 
 ```{r}
 undersampled_data <- ubBalance(predictor_variables, 
                                response_variable, 
@@ -210,7 +266,7 @@ names(undersampled_combined)[names(undersampled_combined) == "undersampled_data$
 levels(undersampled_combined$Exited) <- c('Loyal', 'Closed')
 ```
 
-##### Plot number of cases in undersampled dataset 
+#### Plot number of cases in undersampled dataset
 ```{r}
 ggplot(data = undersampled_combined, aes(fill = Exited))+
     geom_bar(aes(x = Exited))+
@@ -226,27 +282,79 @@ ggplot(data = undersampled_combined, aes(fill = Exited))+
            panel.grid.minor = element_blank(),
            panel.background = element_blank())
 ```
-##### Scatter plot of undersampled data (NEED TO FIX WHAT GOES ON X AND Y)
+
+
+#### Set your random seed to 1 and create a training and test split using the sample.split() function in the caTools library, with 70% of the observations in the training set and 30% in the testing set
 ```{r}
-ggplot(data = undersampled_combined, aes(x = Tenure, y = CustomerId, colour = Exited))+
-  geom_point()+
-    ggtitle("Undersampled dataset")+
-    xlab("V4")+
-    ylab("V7")+
-    xlim(-5, 15)+
-    ylim(-50, 50)+
-    theme(panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          panel.background = element_blank(), 
-          legend.key=element_blank())
+set.seed(1)
+library(caTools)
+split = sample.split(bank.churn$Exited, SplitRatio = 0.7)
+train = subset(bank.churn, split ==TRUE)
+test = subset(bank.churn, split == FALSE)
+```
+#### sample.split() balances the dependent variable between the training and testing sets
+#### What is the (test) accuracy of this baseline model?
+```{r}
+z = table(test$Exited)
+z[1]/sum(z)
+```
+#### Accuracy = .7963333
+#### What is the (test) true positive rate of this baseline model?
+```{r}
+z = table (test$Exited)
+z[2]/sum(z)
+```
+#### True Positive Rate = .796333
+#### What is the (test) false positive rate of this baseline model?
+```{r}
+z = table (test$Exited)
+z[1]/sum(z)
+```
+#### False Positive Rate = .203667
+
+
+
+## Log Transformation 
+```{r}
+library(e1071)
 ```
 
+```{r}
+ggplot(data = bank.churn, aes(Age)) +
+geom_histogram()
+```
 
-## Build a Logistic Regression model
-##### Fitting the logistic regression model 
+```{r}
+skewness(bank.churn$Age)
+```
 
+```{r}
+log_age <- log10(bank.churn$Age)
+```
 
+```{r}
+ggplot(data = bank.churn, aes(log_age)) +
+geom_histogram()
+```
 
+## Evaluation (three different models)
+```{r}
+log.model1 <- lm(log_age~Tenure, data = bank.churn)
+log.model2 <-lm(log_age~Tenure + Gender, data = bank.churn)
+log.model3 <- lm(log_age~Tenure + Gender + Balance, data = bank.churn)
+```
+
+```{r}
+anova(log.model1 ,log.model2)
+```
+
+```{r}
+anova(log.model2,log.model3)
+```
+
+```{r}
+anova(log.model1, log.model3)
+```
 
 
 
