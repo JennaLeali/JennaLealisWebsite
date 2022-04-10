@@ -63,14 +63,13 @@ glimpse(bank.churn)
 
 ## Remove Rows with Missing Values 
 ```{r}
-sapply(bank.churn, function(x) sum(is.na(x)))
+bank.churn %>%
+  summarise_all(funs(sum(is.na(.))))
 ```
 
-```{r}
-bank.churn <- bank.churn[complete.cases(bank.churn), ]
-```
 
 ## Data Wrangling 
+
 #### Change the values in columns “HasCrCard”, "IsActiveMember", and "Exited" from 0 or 1 to “No” or “Yes”
 ```{r}
 bank.churn$HasCrCard <- as.factor(mapvalues(bank.churn$HasCrCard,
@@ -315,68 +314,11 @@ z[1]/sum(z)
 
 ## Fitting the logistic regression model
 #### Exploring Data
-#### Train a logistic regression model using tenure as the independent variable. What is the coefficient of tenure?
+
 ```{r}
-ChurnLog = glm(Exited ~ Tenure,  data=train, family=binomial)
-summary(ChurnLog)
-```
-#### Tenure = -0.00811
-#### Train a logistic regression model using Age as the independent variable. What is the coefficient of Age?
-```{r}
-ChurnLog = glm(Exited ~ Age,  data=train, family=binomial)
-summary(ChurnLog)
-```
-#### Train a logistic regression model using Geography as the independent variable. What is the coefficient of Geography?
-```{r}
-ChurnLog = glm(Exited ~ Geography,  data=train, family=binomial)
-summary(ChurnLog)
-```
-#### Train a logistic regression model using Gender as the independent variable. What is the coefficient of Gender?
-```{r}
-ChurnLog = glm(Exited ~ Gender,  data=train, family=binomial)
-summary(ChurnLog)
-```
-#### Train a logistic regression model using NumOfProducts as the independent variable. What is the coefficient of NumOfProducts?
-```{r}
-ChurnLog = glm(Exited ~ NumOfProducts,  data=train, family=binomial)
-summary(ChurnLog)
-```
-#### Train a logistic regression model using HasCrCard as the independent variable. What is the coefficient of HasCrCard?
-```{r}
-ChurnLog = glm(Exited ~ HasCrCard,  data=train, family=binomial)
-summary(ChurnLog)
-```
-#### Train a logistic regression model using IsActiveMember as the independent variable. What is the coefficient of IsActiveMember?
-```{r}
-ChurnLog = glm(Exited ~ IsActiveMember,  data=train, family=binomial)
-summary(ChurnLog)
-```
-#### Train a logistic regression model using EstimatedSalary as the independent variable. What is the coefficient of EstimatedSalary?
-```{r}
-ChurnLog = glm(Exited ~ EstimatedSalary,  data=train, family=binomial)
-summary(ChurnLog)
-```
-#### Train a logistic regression model using Balance as the independent variable. What is the coefficient of Balance?
-```{r}
-ChurnLog = glm(Exited ~ Balance,  data=train, family=binomial)
-summary(ChurnLog)
-```
-#### Train a logistic regression model using CreditScore as the independent variable. What is the coefficient of CreditScore?
-```{r}
-ChurnLog = glm(Exited ~ CreditScore,  data=train, family=binomial)
-summary(ChurnLog)
+glm(formula = Exited ~ Age + Tenure + Geography + Gender + NumOfProducts + HasCrCard + IsActiveMember + EstimatedSalary + Balance + CreditScore, family = binomial, data = train)
 ```
 
-
-
-
-#### Using logistic regression model, obtain predictions on the test set. Then, using a probability threshold of 0.5, create a confusion matrix for the test set. What is the accuracy of logistic regression model?
-```{r}
-predictTrain = predict(ChurnLog, newdata = test, type="response")
-table(test$Exited, predictTrain > 0.5)
-z = table(test$Exited, predictTrain > .1)
-sum(diag(z))/sum(z)
-```
 #### Accuracy = 0.7963333
 
 #### Explore all variables 
@@ -389,6 +331,7 @@ summary(mylogit)
 ```
 
 #### From the results of the Test, we can see that Age, Geography, Gender, IsActiveMember, and Balance are the most important variables when it comes to predicting bank churn.The Pr(>|z|) column represents the absolute value of the z-value associated with each of the predictor variables. Because the values for Age, Geography, Gender, IsActiveMember, and Balance is less than 0.05, this indicates that these predictor variables have a statistically significant relationship with the response variable in our model and are the most important church predictors. Thus these are the variables we will include in our logistic regression model.
+
 
 ```{r}
 mylogit2 <- glm(Exited ~ Age + Geography + Gender + IsActiveMember + Balance, data = bank.churn, family = "binomial")
@@ -436,8 +379,8 @@ ggplot(data = bank.churn, aes(log_age)) +
 geom_histogram()
 ```
 
-## Evaluation (three different models)
-#### Three Stars
+## Evaluation (two different models)
+#### TFrom the results of the Test, we can see that Age, Geography, Gender, IsActiveMember, and Balance are the most important variables when it comes to predicting bank churn.The Pr(>|z|) column represents the absolute value of the z-value associated with each of the predictor variables. Because the values for Age, Geography, Gender, IsActiveMember, and Balance is less than 0.05, this indicates that these predictor variables have a statistically significant relationship with the response variable in our model and are the most important church predictors. Thus these are the variables we will include in our logistic regression model.
 ```{r}
 mylogit2 <- glm(Exited ~ Age + Geography + Gender + IsActiveMember + Balance, data = bank.churn, family = "binomial")
 ```
@@ -445,7 +388,7 @@ mylogit2 <- glm(Exited ~ Age + Geography + Gender + IsActiveMember + Balance, da
 summary(mylogit2)
 ```
 
-#### One Star and Above 
+#### We will be comparing our logistic regression model to a second one that includes other predictive variables including Age, Geography, Gender, IsActiveMember, Balance, CreditScore, and NumOfProducts that have a PR(>|z|) score less than 0.05.  The resulting model does seems to be better than the previous model as the AIC value is lesser.
 ```{r}
 mylogit3 <- glm(Exited ~ Age + Geography + Gender + IsActiveMember + Balance + CreditScore + NumOfProducts, data = bank.churn, family = "binomial")
 ```
@@ -472,6 +415,9 @@ anova(log.model2,log.model3)
 ```{r}
 anova(log.model1, log.model3)
 ```
+
+## Final Evaluation 
+<p style="color:orange">From the evaluations and analysis we pulled we found out that customers who were using 3 or 4 products, customers who also were bewteen the ages of 40 and 65, those who had a credit score of 450 and below, were more likely to quit the bank. Over all, the majority of their clients stayed with the bank!</p>
 
 
 

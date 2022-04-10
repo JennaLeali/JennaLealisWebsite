@@ -119,14 +119,25 @@ Independent variables contain information about customers. Dependent variable re
 </div>
 <div id="remove-rows-with-missing-values" class="section level2">
 <h2>Remove Rows with Missing Values</h2>
-<pre class="r"><code>sapply(bank.churn, function(x) sum(is.na(x)))</code></pre>
-<pre><code>##       RowNumber      CustomerId     CreditScore       Geography          Gender 
-##               0               0               0               0               0 
-##             Age          Tenure         Balance   NumOfProducts       HasCrCard 
-##               0               0               0               0               0 
-##  IsActiveMember EstimatedSalary          Exited 
-##               0               0               0</code></pre>
-<pre class="r"><code>bank.churn &lt;- bank.churn[complete.cases(bank.churn), ]</code></pre>
+<pre class="r"><code>bank.churn %&gt;%
+  summarise_all(funs(sum(is.na(.))))</code></pre>
+<pre><code>## Warning: `funs()` was deprecated in dplyr 0.8.0.
+## Please use a list of either functions or lambdas: 
+## 
+##   # Simple named list: 
+##   list(mean = mean, median = median)
+## 
+##   # Auto named with `tibble::lst()`: 
+##   tibble::lst(mean, median)
+## 
+##   # Using lambdas
+##   list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.</code></pre>
+<pre><code>##   RowNumber CustomerId CreditScore Geography Gender Age Tenure Balance
+## 1         0          0           0         0      0   0      0       0
+##   NumOfProducts HasCrCard IsActiveMember EstimatedSalary Exited
+## 1             0         0              0               0      0</code></pre>
 </div>
 <div id="data-wrangling" class="section level2">
 <h2>Data Wrangling</h2>
@@ -212,7 +223,7 @@ bank.churn$tenure_group &lt;- as.factor(bank.churn$tenure_group)</code></pre>
 <h4>Visualising distributions</h4>
 <pre class="r"><code>ggplot(data = bank.churn) +
   geom_bar(mapping = aes(x = Exited))</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <pre class="r"><code>bank.churn %&gt;% 
   count(Exited)</code></pre>
 <pre><code>##   Exited    n
@@ -223,7 +234,7 @@ bank.churn$tenure_group &lt;- as.factor(bank.churn$tenure_group)</code></pre>
 <h4>Continuous Variable (Estimated Salary) Histogram</h4>
 <pre class="r"><code>ggplot(data = bank.churn) +
   geom_histogram(mapping = aes(x = EstimatedSalary), binwidth = 0.9)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 </div>
 <div id="explore-a-variety-of-binwidths-to-reveal-different-patterns" class="section level4">
 <h4>Explore a variety of binwidths to reveal different patterns</h4>
@@ -232,19 +243,19 @@ bank.churn$tenure_group &lt;- as.factor(bank.churn$tenure_group)</code></pre>
   
 ggplot(data = smaller, mapping = aes(x = EstimatedSalary)) +
   geom_histogram(binwidth = 0.1)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(data = smaller, mapping = aes(x = CreditScore, colour = Exited)) +
   geom_freqpoly(binwidth = 4)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(data = smaller, mapping = aes(x = EstimatedSalary, colour = Exited)) +
   geom_freqpoly(binwidth = 4)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(data = smaller, mapping = aes(x = Balance, colour = Exited)) +
   geom_freqpoly(binwidth = .5)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(data = bank.churn, mapping = aes(x = EstimatedSalary)) + 
   geom_histogram(binwidth = 3)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 </div>
 <div id="bar-plots-of-categorical-variables" class="section level4">
 <h4>Bar plots of categorical variables</h4>
@@ -261,7 +272,7 @@ p5 &lt;- ggplot(bank.churn, aes(x=Exited)) + ggtitle(&quot;Has Closed Account&qu
 p6 &lt;- ggplot(bank.churn, aes(x=tenure_group)) + ggtitle(&quot;Tenure Group&quot;) + xlab(&quot;Tenure Group&quot;) +
   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
 grid.arrange(p1, p2, p3, p4, p5, p6, ncol=3)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 </div>
 </div>
 </div>
@@ -300,7 +311,7 @@ ggplot(data = bank.churn, aes(fill = Exited)) +
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
          panel.background = element_blank())</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 </div>
 </div>
 <div id="seperating-the-data-into-the-predictor-variable-and-the-response-variable" class="section level4">
@@ -340,7 +351,7 @@ levels(undersampled_combined$Exited) &lt;- c(&#39;Loyal&#39;, &#39;Closed&#39;)<
            panel.grid.major = element_blank(),
            panel.grid.minor = element_blank(),
            panel.background = element_blank())</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
 </div>
 <div id="set-your-random-seed-to-1-and-create-a-training-and-test-split-using-the-sample.split-function-in-the-catools-library-with-70-of-the-observations-in-the-training-set-and-30-in-the-testing-set" class="section level4">
 <h4>Set your random seed to 1 and create a training and test split using the sample.split() function in the caTools library, with 70% of the observations in the training set and 30% in the testing set</h4>
@@ -391,292 +402,23 @@ z[1]/sum(z)</code></pre>
 <h2>Fitting the logistic regression model</h2>
 <div id="exploring-data" class="section level4">
 <h4>Exploring Data</h4>
-</div>
-<div id="train-a-logistic-regression-model-using-tenure-as-the-independent-variable.-what-is-the-coefficient-of-tenure" class="section level4">
-<h4>Train a logistic regression model using tenure as the independent variable. What is the coefficient of tenure?</h4>
-<pre class="r"><code>ChurnLog = glm(Exited ~ Tenure,  data=train, family=binomial)
-summary(ChurnLog)</code></pre>
+<pre class="r"><code>glm(formula = Exited ~ Age + Tenure + Geography + Gender + NumOfProducts + HasCrCard + IsActiveMember + EstimatedSalary + Balance + CreditScore, family = binomial, data = train)</code></pre>
 <pre><code>## 
-## Call:
-## glm(formula = Exited ~ Tenure, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.6872  -0.6798  -0.6724  -0.6652   1.8020  
+## Call:  glm(formula = Exited ~ Age + Tenure + Geography + Gender + NumOfProducts + 
+##     HasCrCard + IsActiveMember + EstimatedSalary + Balance + 
+##     CreditScore, family = binomial, data = train)
 ## 
 ## Coefficients:
-##             Estimate Std. Error z value            Pr(&gt;|z|)    
-## (Intercept) -1.32299    0.05868 -22.547 &lt;0.0000000000000002 ***
-## Tenure      -0.00811    0.01024  -0.792               0.428    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+##       (Intercept)                Age             Tenure   GeographyGermany  
+##     -3.3870867942       0.0748285407      -0.0149746478       0.7879671928  
+##    GeographySpain         GenderMale      NumOfProducts       HasCrCardYes  
+##     -0.0855732598      -0.5259563826      -0.1568672567      -0.0719593892  
+## IsActiveMemberYes    EstimatedSalary            Balance        CreditScore  
+##     -1.0030726826       0.0000005761       0.0000019484      -0.0005770184  
 ## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 7077.1  on 6999  degrees of freedom
-## Residual deviance: 7076.5  on 6998  degrees of freedom
-## AIC: 7080.5
-## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-</div>
-<div id="tenure--0.00811" class="section level4">
-<h4>Tenure = -0.00811</h4>
-</div>
-<div id="train-a-logistic-regression-model-using-age-as-the-independent-variable.-what-is-the-coefficient-of-age" class="section level4">
-<h4>Train a logistic regression model using Age as the independent variable. What is the coefficient of Age?</h4>
-<pre class="r"><code>ChurnLog = glm(Exited ~ Age,  data=train, family=binomial)
-summary(ChurnLog)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = Exited ~ Age, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.9439  -0.6620  -0.5371  -0.4197   2.4078  
-## 
-## Coefficients:
-##              Estimate Std. Error z value            Pr(&gt;|z|)    
-## (Intercept) -4.016511   0.125013  -32.13 &lt;0.0000000000000002 ***
-## Age          0.065249   0.002875   22.69 &lt;0.0000000000000002 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 7077.1  on 6999  degrees of freedom
-## Residual deviance: 6521.9  on 6998  degrees of freedom
-## AIC: 6525.9
-## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-</div>
-<div id="train-a-logistic-regression-model-using-geography-as-the-independent-variable.-what-is-the-coefficient-of-geography" class="section level4">
-<h4>Train a logistic regression model using Geography as the independent variable. What is the coefficient of Geography?</h4>
-<pre class="r"><code>ChurnLog = glm(Exited ~ Geography,  data=train, family=binomial)
-summary(ChurnLog)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = Exited ~ Geography, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8916  -0.6018  -0.6018  -0.5825   1.9275  
-## 
-## Coefficients:
-##                  Estimate Std. Error z value            Pr(&gt;|z|)    
-## (Intercept)      -1.61693    0.04526 -35.723 &lt;0.0000000000000002 ***
-## GeographyGermany  0.89960    0.06819  13.192 &lt;0.0000000000000002 ***
-## GeographySpain   -0.07112    0.08033  -0.885               0.376    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 7077.1  on 6999  degrees of freedom
-## Residual deviance: 6871.0  on 6997  degrees of freedom
-## AIC: 6877
-## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-</div>
-<div id="train-a-logistic-regression-model-using-gender-as-the-independent-variable.-what-is-the-coefficient-of-gender" class="section level4">
-<h4>Train a logistic regression model using Gender as the independent variable. What is the coefficient of Gender?</h4>
-<pre class="r"><code>ChurnLog = glm(Exited ~ Gender,  data=train, family=binomial)
-summary(ChurnLog)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = Exited ~ Gender, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.7571  -0.7571  -0.6016  -0.6016   1.8966  
-## 
-## Coefficients:
-##             Estimate Std. Error z value            Pr(&gt;|z|)    
-## (Intercept) -1.10279    0.04091 -26.959 &lt;0.0000000000000002 ***
-## GenderMale  -0.51487    0.05980  -8.611 &lt;0.0000000000000002 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 7077.1  on 6999  degrees of freedom
-## Residual deviance: 7002.4  on 6998  degrees of freedom
-## AIC: 7006.4
-## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-</div>
-<div id="train-a-logistic-regression-model-using-numofproducts-as-the-independent-variable.-what-is-the-coefficient-of-numofproducts" class="section level4">
-<h4>Train a logistic regression model using NumOfProducts as the independent variable. What is the coefficient of NumOfProducts?</h4>
-<pre class="r"><code>ChurnLog = glm(Exited ~ NumOfProducts,  data=train, family=binomial)
-summary(ChurnLog)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = Exited ~ NumOfProducts, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.7144  -0.7144  -0.6376  -0.6376   2.0619  
-## 
-## Coefficients:
-##               Estimate Std. Error z value             Pr(&gt;|z|)    
-## (Intercept)   -0.98112    0.08421  -11.65 &lt; 0.0000000000000002 ***
-## NumOfProducts -0.25435    0.05332   -4.77           0.00000184 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 7077.1  on 6999  degrees of freedom
-## Residual deviance: 7053.8  on 6998  degrees of freedom
-## AIC: 7057.8
-## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-</div>
-<div id="train-a-logistic-regression-model-using-hascrcard-as-the-independent-variable.-what-is-the-coefficient-of-hascrcard" class="section level4">
-<h4>Train a logistic regression model using HasCrCard as the independent variable. What is the coefficient of HasCrCard?</h4>
-<pre class="r"><code>ChurnLog = glm(Exited ~ HasCrCard,  data=train, family=binomial)
-summary(ChurnLog)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = Exited ~ HasCrCard, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.6895  -0.6688  -0.6688  -0.6688   1.7930  
-## 
-## Coefficients:
-##              Estimate Std. Error z value            Pr(&gt;|z|)    
-## (Intercept)  -1.31534    0.05381 -24.443 &lt;0.0000000000000002 ***
-## HasCrCardYes -0.06842    0.06451  -1.061               0.289    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 7077.1  on 6999  degrees of freedom
-## Residual deviance: 7076.0  on 6998  degrees of freedom
-## AIC: 7080
-## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-</div>
-<div id="train-a-logistic-regression-model-using-isactivemember-as-the-independent-variable.-what-is-the-coefficient-of-isactivemember" class="section level4">
-<h4>Train a logistic regression model using IsActiveMember as the independent variable. What is the coefficient of IsActiveMember?</h4>
-<pre class="r"><code>ChurnLog = glm(Exited ~ IsActiveMember,  data=train, family=binomial)
-summary(ChurnLog)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = Exited ~ IsActiveMember, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.7850  -0.7850  -0.5644  -0.5644   1.9574  
-## 
-## Coefficients:
-##                   Estimate Std. Error z value            Pr(&gt;|z|)    
-## (Intercept)       -1.01944    0.03912  -26.06 &lt;0.0000000000000002 ***
-## IsActiveMemberYes -0.73694    0.06095  -12.09 &lt;0.0000000000000002 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 7077.1  on 6999  degrees of freedom
-## Residual deviance: 6926.6  on 6998  degrees of freedom
-## AIC: 6930.6
-## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-</div>
-<div id="train-a-logistic-regression-model-using-estimatedsalary-as-the-independent-variable.-what-is-the-coefficient-of-estimatedsalary" class="section level4">
-<h4>Train a logistic regression model using EstimatedSalary as the independent variable. What is the coefficient of EstimatedSalary?</h4>
-<pre class="r"><code>ChurnLog = glm(Exited ~ EstimatedSalary,  data=train, family=binomial)
-summary(ChurnLog)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = Exited ~ EstimatedSalary, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.6911  -0.6808  -0.6709  -0.6606   1.8080  
-## 
-## Coefficients:
-##                      Estimate    Std. Error z value            Pr(&gt;|z|)    
-## (Intercept)     -1.4174603145  0.0602080135  -23.54 &lt;0.0000000000000002 ***
-## EstimatedSalary  0.0000005364  0.0000005155    1.04               0.298    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 7077.1  on 6999  degrees of freedom
-## Residual deviance: 7076.0  on 6998  degrees of freedom
-## AIC: 7080
-## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-</div>
-<div id="train-a-logistic-regression-model-using-balance-as-the-independent-variable.-what-is-the-coefficient-of-balance" class="section level4">
-<h4>Train a logistic regression model using Balance as the independent variable. What is the coefficient of Balance?</h4>
-<pre class="r"><code>ChurnLog = glm(Exited ~ Balance,  data=train, family=binomial)
-summary(ChurnLog)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = Exited ~ Balance, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8714  -0.7268  -0.5718  -0.5718   1.9451  
-## 
-## Coefficients:
-##                  Estimate    Std. Error z value            Pr(&gt;|z|)    
-## (Intercept) -1.7283376472  0.0520860883 -33.182 &lt;0.0000000000000002 ***
-## Balance      0.0000044585  0.0000004907   9.085 &lt;0.0000000000000002 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 7077.1  on 6999  degrees of freedom
-## Residual deviance: 6992.2  on 6998  degrees of freedom
-## AIC: 6996.2
-## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-</div>
-<div id="train-a-logistic-regression-model-using-creditscore-as-the-independent-variable.-what-is-the-coefficient-of-creditscore" class="section level4">
-<h4>Train a logistic regression model using CreditScore as the independent variable. What is the coefficient of CreditScore?</h4>
-<pre class="r"><code>ChurnLog = glm(Exited ~ CreditScore,  data=train, family=binomial)
-summary(ChurnLog)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = Exited ~ CreditScore, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.7266  -0.6845  -0.6674  -0.6431   1.8448  
-## 
-## Coefficients:
-##               Estimate Std. Error z value  Pr(&gt;|z|)    
-## (Intercept) -0.9209167  0.1994712  -4.617 0.0000039 ***
-## CreditScore -0.0006817  0.0003049  -2.236    0.0254 *  
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 7077.1  on 6999  degrees of freedom
-## Residual deviance: 7072.1  on 6998  degrees of freedom
-## AIC: 7076.1
-## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-</div>
-<div id="using-logistic-regression-model-obtain-predictions-on-the-test-set.-then-using-a-probability-threshold-of-0.5-create-a-confusion-matrix-for-the-test-set.-what-is-the-accuracy-of-logistic-regression-model" class="section level4">
-<h4>Using logistic regression model, obtain predictions on the test set. Then, using a probability threshold of 0.5, create a confusion matrix for the test set. What is the accuracy of logistic regression model?</h4>
-<pre class="r"><code>predictTrain = predict(ChurnLog, newdata = test, type=&quot;response&quot;)
-table(test$Exited, predictTrain &gt; 0.5)</code></pre>
-<pre><code>##         
-##          FALSE
-##   Loyal   2389
-##   Closed   611</code></pre>
-<pre class="r"><code>z = table(test$Exited, predictTrain &gt; .1)
-sum(diag(z))/sum(z)</code></pre>
-<pre><code>## [1] 0.7963333</code></pre>
+## Degrees of Freedom: 6999 Total (i.e. Null);  6988 Residual
+## Null Deviance:       7077 
+## Residual Deviance: 5995  AIC: 6019</code></pre>
 </div>
 <div id="accuracy-0.7963333" class="section level4">
 <h4>Accuracy = 0.7963333</h4>
@@ -799,19 +541,19 @@ sum(diag(z))/sum(z)</code></pre>
 <pre class="r"><code>ggplot(data = bank.churn, aes(Age)) +
 geom_histogram()</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
 <pre class="r"><code>skewness(bank.churn$Age)</code></pre>
 <pre><code>## [1] 1.011017</code></pre>
 <pre class="r"><code>log_age &lt;- log10(bank.churn$Age)</code></pre>
 <pre class="r"><code>ggplot(data = bank.churn, aes(log_age)) +
 geom_histogram()</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-62-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
 </div>
-<div id="evaluation-three-different-models" class="section level2">
-<h2>Evaluation (three different models)</h2>
-<div id="three-stars" class="section level4">
-<h4>Three Stars</h4>
+<div id="evaluation-two-different-models" class="section level2">
+<h2>Evaluation (two different models)</h2>
+<div id="tfrom-the-results-of-the-test-we-can-see-that-age-geography-gender-isactivemember-and-balance-are-the-most-important-variables-when-it-comes-to-predicting-bank-churn.the-prz-column-represents-the-absolute-value-of-the-z-value-associated-with-each-of-the-predictor-variables.-because-the-values-for-age-geography-gender-isactivemember-and-balance-is-less-than-0.05-this-indicates-that-these-predictor-variables-have-a-statistically-significant-relationship-with-the-response-variable-in-our-model-and-are-the-most-important-church-predictors.-thus-these-are-the-variables-we-will-include-in-our-logistic-regression-model." class="section level4">
+<h4>TFrom the results of the Test, we can see that Age, Geography, Gender, IsActiveMember, and Balance are the most important variables when it comes to predicting bank churn.The Pr(&gt;|z|) column represents the absolute value of the z-value associated with each of the predictor variables. Because the values for Age, Geography, Gender, IsActiveMember, and Balance is less than 0.05, this indicates that these predictor variables have a statistically significant relationship with the response variable in our model and are the most important church predictors. Thus these are the variables we will include in our logistic regression model.</h4>
 <pre class="r"><code>mylogit2 &lt;- glm(Exited ~ Age + Geography + Gender + IsActiveMember + Balance, data = bank.churn, family = &quot;binomial&quot;)</code></pre>
 <pre class="r"><code>summary(mylogit2)</code></pre>
 <pre><code>## 
@@ -843,8 +585,8 @@ geom_histogram()</code></pre>
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 </div>
-<div id="one-star-and-above" class="section level4">
-<h4>One Star and Above</h4>
+<div id="we-will-be-comparing-our-logistic-regression-model-to-a-second-one-that-includes-other-predictive-variables-including-age-geography-gender-isactivemember-balance-creditscore-and-numofproducts-that-have-a-prz-score-less-than-0.05.-the-resulting-model-does-seems-to-be-better-than-the-previous-model-as-the-aic-value-is-lesser." class="section level4">
+<h4>We will be comparing our logistic regression model to a second one that includes other predictive variables including Age, Geography, Gender, IsActiveMember, Balance, CreditScore, and NumOfProducts that have a PR(&gt;|z|) score less than 0.05. The resulting model does seems to be better than the previous model as the AIC value is lesser.</h4>
 <pre class="r"><code>mylogit3 &lt;- glm(Exited ~ Age + Geography + Gender + IsActiveMember + Balance + CreditScore + NumOfProducts, data = bank.churn, family = &quot;binomial&quot;)</code></pre>
 <pre class="r"><code>summary(mylogit3)</code></pre>
 <pre><code>## 
@@ -915,4 +657,10 @@ log.model3 &lt;- lm(log_age~Tenure + Gender + Balance, data = bank.churn)</code>
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
+</div>
+<div id="final-evaluation" class="section level2">
+<h2>Final Evaluation</h2>
+<p style="color:orange">
+From the evaluations and analysis we pulled we found out that customers who were using 3 or 4 products, customers who also were bewteen the ages of 40 and 65, those who had a credit score of 450 and below, were more likely to quit the bank. Over all, the majority of their clients stayed with the bank!
+</p>
 </div>
