@@ -548,7 +548,8 @@ geom_histogram()</code></pre>
 <pre class="r"><code>ggplot(data = bank.churn, aes(log_age)) +
 geom_histogram()</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-51-1.png" width="672" />
+#### Doing log transformations in order to improve model performance. After doing the log trasformation on the age variable I found that it made the data more symmetrical as well as reduced the errors in the data set</p>
 </div>
 <div id="evaluation-two-different-models" class="section level2">
 <h2>Evaluation (two different models)</h2>
@@ -661,6 +662,6 @@ log.model3 &lt;- lm(log_age~Tenure + Gender + Balance, data = bank.churn)</code>
 <div id="final-evaluation" class="section level2">
 <h2>Final Evaluation</h2>
 <p style="color:orange">
-From the evaluations and analysis we pulled we found out that customers who were using 3 or 4 products, customers who also were bewteen the ages of 40 and 65, those who had a credit score of 450 and below, were more likely to quit the bank. Over all, the majority of their clients stayed with the bank!
+From the evaluations and analysis we pulled we found out that customers who were using 3 or 4 products, customers who also were between the ages of 40 and 65, those who had a credit score of 450 and below, were more likely to quit the bank. Over all, the majority of their clients stayed with the bank!
 </p>
 </div>

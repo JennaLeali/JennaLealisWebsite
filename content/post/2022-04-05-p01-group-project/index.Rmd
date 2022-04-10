@@ -378,6 +378,7 @@ log_age <- log10(bank.churn$Age)
 ggplot(data = bank.churn, aes(log_age)) +
 geom_histogram()
 ```
+#### Doing log transformations in order to improve model performance. After doing the log trasformation on the age variable I found that it made the data more symmetrical as well as reduced the errors in the data set
 
 ## Evaluation (two different models)
 #### TFrom the results of the Test, we can see that Age, Geography, Gender, IsActiveMember, and Balance are the most important variables when it comes to predicting bank churn.The Pr(>|z|) column represents the absolute value of the z-value associated with each of the predictor variables. Because the values for Age, Geography, Gender, IsActiveMember, and Balance is less than 0.05, this indicates that these predictor variables have a statistically significant relationship with the response variable in our model and are the most important church predictors. Thus these are the variables we will include in our logistic regression model.
@@ -417,7 +418,7 @@ anova(log.model1, log.model3)
 ```
 
 ## Final Evaluation 
-<p style="color:orange">From the evaluations and analysis we pulled we found out that customers who were using 3 or 4 products, customers who also were bewteen the ages of 40 and 65, those who had a credit score of 450 and below, were more likely to quit the bank. Over all, the majority of their clients stayed with the bank!</p>
+<p style="color:orange">From the evaluations and analysis we pulled we found out that customers who were using 3 or 4 products, customers who also were between the ages of 40 and 65, those who had a credit score of 450 and below, were more likely to quit the bank. Over all, the majority of their clients stayed with the bank!</p>
 
 
 
