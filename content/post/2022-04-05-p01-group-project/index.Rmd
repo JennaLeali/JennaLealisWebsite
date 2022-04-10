@@ -311,7 +311,44 @@ z = table (test$Exited)
 z[1]/sum(z)
 ```
 #### False Positive Rate = .203667
+## Build a Logistic Regression model
 
+## Fitting the logistic regression model 
+##### Train a logistic regression model using tenure as the independent variable. What is the coefficient of tenure?
+```{r}
+ChurnLog = glm(Exited ~ Tenure,  data=train, family=binomial)
+summary(ChurnLog)
+```
+#### Tenure = -0.00811
+#### Using logistic regression model, obtain predictions on the test set. Then, using a probability threshold of 0.5, create a confusion matrix for the test set. What is the accuracy of logistic regression model?
+```{r}
+predictTrain = predict(ChurnLog, newdata = test, type="response")
+table(test$Exited, predictTrain > 0.5)
+z = table(test$Exited, predictTrain > .1)
+sum(diag(z))/sum(z)
+```
+#### Accuracy = 0.7963333
+
+```{r}
+mylogit <- glm(Exited ~ EstimatedSalary + Balance + CreditScore, data = bank.churn, family = "binomial")
+```
+
+```{r}
+summary(mylogit)
+```
+
+```{r}
+confint(mylogit)
+```
+```{r}
+confint.default(mylogit)
+```
+```{r}
+exp(coef(mylogit))
+```
+```{r}
+exp(cbind(OR = coef(mylogit), confint(mylogit)))
+```
 
 
 ## Log Transformation 

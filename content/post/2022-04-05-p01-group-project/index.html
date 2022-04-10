@@ -384,6 +384,107 @@ z[1]/sum(z)</code></pre>
 <h4>False Positive Rate = .203667</h4>
 </div>
 </div>
+<div id="build-a-logistic-regression-model" class="section level2">
+<h2>Build a Logistic Regression model</h2>
+</div>
+<div id="fitting-the-logistic-regression-model" class="section level2">
+<h2>Fitting the logistic regression model</h2>
+<div id="train-a-logistic-regression-model-using-tenure-as-the-independent-variable.-what-is-the-coefficient-of-tenure" class="section level5">
+<h5>Train a logistic regression model using tenure as the independent variable. What is the coefficient of tenure?</h5>
+<pre class="r"><code>ChurnLog = glm(Exited ~ Tenure,  data=train, family=binomial)
+summary(ChurnLog)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Tenure, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.6872  -0.6798  -0.6724  -0.6652   1.8020  
+## 
+## Coefficients:
+##             Estimate Std. Error z value            Pr(&gt;|z|)    
+## (Intercept) -1.32299    0.05868 -22.547 &lt;0.0000000000000002 ***
+## Tenure      -0.00811    0.01024  -0.792               0.428    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 7077.1  on 6999  degrees of freedom
+## Residual deviance: 7076.5  on 6998  degrees of freedom
+## AIC: 7080.5
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<div id="tenure--0.00811" class="section level4">
+<h4>Tenure = -0.00811</h4>
+</div>
+<div id="using-logistic-regression-model-obtain-predictions-on-the-test-set.-then-using-a-probability-threshold-of-0.5-create-a-confusion-matrix-for-the-test-set.-what-is-the-accuracy-of-logistic-regression-model" class="section level4">
+<h4>Using logistic regression model, obtain predictions on the test set. Then, using a probability threshold of 0.5, create a confusion matrix for the test set. What is the accuracy of logistic regression model?</h4>
+<pre class="r"><code>predictTrain = predict(ChurnLog, newdata = test, type=&quot;response&quot;)
+table(test$Exited, predictTrain &gt; 0.5)</code></pre>
+<pre><code>##         
+##          FALSE
+##   Loyal   2389
+##   Closed   611</code></pre>
+<pre class="r"><code>z = table(test$Exited, predictTrain &gt; .1)
+sum(diag(z))/sum(z)</code></pre>
+<pre><code>## [1] 0.7963333</code></pre>
+</div>
+<div id="accuracy-0.7963333" class="section level4">
+<h4>Accuracy = 0.7963333</h4>
+<pre class="r"><code>mylogit &lt;- glm(Exited ~ EstimatedSalary + Balance + CreditScore, data = bank.churn, family = &quot;binomial&quot;)</code></pre>
+<pre class="r"><code>summary(mylogit)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ EstimatedSalary + Balance + CreditScore, 
+##     family = &quot;binomial&quot;, data = bank.churn)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.9593  -0.7280  -0.5949  -0.5420   2.0427  
+## 
+## Coefficients:
+##                      Estimate    Std. Error z value             Pr(&gt;|z|)    
+## (Intercept)     -1.3401319938  0.1779054092  -7.533   0.0000000000000497 ***
+## EstimatedSalary  0.0000004647  0.0000004355   1.067              0.28591    
+## Balance          0.0000048571  0.0000004129  11.764 &lt; 0.0000000000000002 ***
+## CreditScore     -0.0007223024  0.0002584294  -2.795              0.00519 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 10110  on 9999  degrees of freedom
+## Residual deviance:  9958  on 9996  degrees of freedom
+## AIC: 9966
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>confint(mylogit)</code></pre>
+<pre><code>## Waiting for profiling to be done...</code></pre>
+<pre><code>##                            2.5 %          97.5 %
+## (Intercept)     -1.6896027532888 -0.992156252195
+## EstimatedSalary -0.0000003887368  0.000001318577
+## Balance          0.0000040504867  0.000005669168
+## CreditScore     -0.0012289883088 -0.000215859971</code></pre>
+<pre class="r"><code>confint.default(mylogit)</code></pre>
+<pre><code>##                           2.5 %          97.5 %
+## (Intercept)     -1.688820188616 -0.991443799081
+## EstimatedSalary -0.000000388827  0.000001318314
+## Balance          0.000004047874  0.000005666359
+## CreditScore     -0.001228814710 -0.000215790076</code></pre>
+<pre class="r"><code>exp(coef(mylogit))</code></pre>
+<pre><code>##     (Intercept) EstimatedSalary         Balance     CreditScore 
+##       0.2618111       1.0000005       1.0000049       0.9992780</code></pre>
+<pre class="r"><code>exp(cbind(OR = coef(mylogit), confint(mylogit)))</code></pre>
+<pre><code>## Waiting for profiling to be done...</code></pre>
+<pre><code>##                        OR     2.5 %    97.5 %
+## (Intercept)     0.2618111 0.1845928 0.3707763
+## EstimatedSalary 1.0000005 0.9999996 1.0000013
+## Balance         1.0000049 1.0000041 1.0000057
+## CreditScore     0.9992780 0.9987718 0.9997842</code></pre>
+</div>
+</div>
 <div id="log-transformation" class="section level2">
 <h2>Log Transformation</h2>
 <pre class="r"><code>library(e1071)</code></pre>
@@ -395,14 +496,14 @@ z[1]/sum(z)</code></pre>
 <pre class="r"><code>ggplot(data = bank.churn, aes(Age)) +
 geom_histogram()</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
 <pre class="r"><code>skewness(bank.churn$Age)</code></pre>
 <pre><code>## [1] 1.011017</code></pre>
 <pre class="r"><code>log_age &lt;- log10(bank.churn$Age)</code></pre>
 <pre class="r"><code>ggplot(data = bank.churn, aes(log_age)) +
 geom_histogram()</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
 </div>
 <div id="evaluation-three-different-models" class="section level2">
 <h2>Evaluation (three different models)</h2>
