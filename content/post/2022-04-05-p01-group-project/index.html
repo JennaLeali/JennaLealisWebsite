@@ -310,7 +310,7 @@ response_variable &lt;- bank.churn$Exited </code></pre>
 </div>
 <div id="minority-case-must-have-the-facotr-level-of-1-default-has-it-coded-as-0" class="section level4">
 <h4>Minority case must have the facotr level of 1, default has it coded as 0</h4>
-<pre class="r"><code>levels(train) &lt;- c(&#39;0&#39;, &#39;1&#39;)</code></pre>
+<pre class="r"><code>levels(response_variable) &lt;- c(&#39;0&#39;, &#39;1&#39;)</code></pre>
 </div>
 <div id="run-undersampled-function" class="section level4">
 <h4>Run undersampled function</h4>
@@ -318,7 +318,7 @@ response_variable &lt;- bank.churn$Exited </code></pre>
                                response_variable, 
                                type=&#39;ubUnder&#39;,         
                                verbose = TRUE)</code></pre>
-<pre><code>## Warning: No positive instances, skip balance</code></pre>
+<pre><code>## Proportion of positives after ubUnder : 50 % of 4074 observations</code></pre>
 <pre class="r"><code>undersampled_combined &lt;- cbind(undersampled_data$X,    
                                undersampled_data$Y)
 

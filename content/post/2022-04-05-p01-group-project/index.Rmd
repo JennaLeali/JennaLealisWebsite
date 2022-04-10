@@ -248,7 +248,7 @@ response_variable <- bank.churn$Exited
 
 #### Minority case must have the facotr level of 1, default has it coded as 0
 ```{r}
-levels(train) <- c('0', '1')
+levels(response_variable) <- c('0', '1')
 ```
 
 #### Run undersampled function 
