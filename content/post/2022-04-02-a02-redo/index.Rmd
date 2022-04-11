@@ -10,13 +10,23 @@ tags: []
 ## Summary 
 ##### A professor of machine learning is planning to get married to his long-time girlfriend. He has never shopped for diamonds before. In the mall, he was confronted with a dizzying array of diamond characteristics, configurations, and pricing. His quick search revealed that diamonds are primarily characterized by 4C viz. Color, Cut, Carat Weight and Clarity besides Polish, Symmetry, and certification. He scrapped the web to collect information from three different wholesaler websites to build his pricing model to ensure he does not get cheated while purchasing the diamond ring. Build a Linear Regression Model to predict the price of the diamond ring of his interest. 
 
+
+
 ## Load Library
 ```{r}
-library("ggplot2")
-library("dplyr")
-library("finalfit")
-library("memisc")
+suppressPackageStartupMessages(library("ggplot2"))
+suppressPackageStartupMessages(library("dplyr"))
+suppressPackageStartupMessages(library("finalfit"))
+suppressPackageStartupMessages(library("memisc"))
+suppressPackageStartupMessages(library("summarytools"))
+suppressPackageStartupMessages(library("janitor"))
+suppressPackageStartupMessages(library("epiDisplay"))
+suppressPackageStartupMessages(library("sjPlot"))
+suppressPackageStartupMessages(library("sjmisc"))
+suppressPackageStartupMessages(library("sjlabelled"))
 ```
+
+
 
 ## Import Data
 ```{r}
@@ -24,24 +34,158 @@ professor.proposes.data <- read.csv("https://raw.githubusercontent.com/JennaLeal
 head(professor.proposes.data)
 ```
 
+
+
+
 ## Summary of Data
 ```{r}
 summary(professor.proposes.data)
 ```
-
 ```{r}
 str(professor.proposes.data)
 ```
 
+### Dealing with duplicates 
 ```{r}
-professor.proposes.data %>% 
-  count(Clarity)
+duplicated_rows <- professor.proposes.data[duplicated(professor.proposes.data),]
+duplicated_rows
+```
+
+
+### Dealing with missing data 
+```{r}
+sum(is.na(professor.proposes.data))
+```
+
+
+
+
+## Univariate Analysis Metric Data
+#### Numerical Varaibles
+```{r}
+library(psych)
+describe(professor.proposes.data)
+```
+#### Categorical variables
+```{r}
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+mode <- getmode(professor.proposes.data$Clarity)
+mode
+```
+
+
+```{r}
+dfSummary(professor.proposes.data)
 ```
 
 ```{r}
-professor.proposes.data %>% 
-  count(Price)
+library(vtable)
+st(professor.proposes.data)
 ```
+```{r}
+st(professor.proposes.data, col.breaks = 4,
+   summ = list(
+     c('notNA(x)','mean(x)','sd(x^2)','min(x)','max(x)'),
+     c('notNA(x)','mean(x)')
+   ),
+   summ.names = list(
+     c('N','Mean','SD of X^2','Min','Max'),
+     c('Count','Percent')
+   ))
+```
+
+#### The Price ranged from 160 to 3145 and had bimodal distribution. The diamonds appear to be in two clusters less than 1000 and higher than 1000
+#### The Carat ranged from 0.09 to 1.58 and had bimodal distribution. The diamonds appear to be in two clusters 0.09 to 0.30 and 0.81 to 1.58 carats.
+
+
+
+
+## Explority Data Analysis 
+```{r}
+summarytools::freq(professor.proposes.data$Carat, order = "freq")
+```
+```{r}
+tabyl(professor.proposes.data$Carat, sort = TRUE)
+```
+```{r}
+tab1(professor.proposes.data$Carat, sort.group = "decreasing", cum.percent = TRUE)
+```
+
+
+```{r}
+summarytools::freq(professor.proposes.data$Clarity, order = "freq")
+```
+```{r}
+tabyl(professor.proposes.data$Clarity, sort = TRUE)
+```
+```{r}
+tab1(professor.proposes.data$Clarity, sort.group = "decreasing", cum.percent = TRUE)
+```
+
+
+
+```{r}
+summarytools::freq(professor.proposes.data$Colour, order = "freq")
+```
+```{r}
+tabyl(professor.proposes.data$Colour, sort = TRUE)
+```
+```{r}
+tab1(professor.proposes.data$Colour, sort.group = "decreasing", cum.percent = TRUE)
+```
+
+
+
+```{r}
+summarytools::freq(professor.proposes.data$Cut, order = "freq")
+```
+```{r}
+tabyl(professor.proposes.data$Cut, sort = TRUE)
+```
+```{r}
+tab1(professor.proposes.data$Cut, sort.group = "decreasing", cum.percent = TRUE)
+```
+
+
+
+```{r}
+summarytools::freq(professor.proposes.data$Certification, order = "freq")
+```
+```{r}
+tabyl(professor.proposes.data$Certification, sort = TRUE)
+```
+```{r}
+tab1(professor.proposes.data$Certification, sort.group = "decreasing", cum.percent = TRUE)
+```
+
+
+
+```{r}
+summarytools::freq(professor.proposes.data$Polish, order = "freq")
+```
+```{r}
+tabyl(professor.proposes.data$Polish, sort = TRUE)
+```
+```{r}
+tab1(professor.proposes.data$Polish, sort.group = "decreasing", cum.percent = TRUE)
+```
+
+
+
+```{r}
+summarytools::freq(professor.proposes.data$Symmetry, order = "freq")
+```
+```{r}
+tabyl(professor.proposes.data$Symmetry, sort = TRUE)
+```
+```{r}
+tab1(professor.proposes.data$Symmetry, sort.group = "decreasing", cum.percent = TRUE)
+```
+
+
 
 
 ##### Range and Interquartile Range of Price 
@@ -56,18 +200,22 @@ professor.proposes.data %>%
   summarize(max(Carat) - min(Carat), IQR(Carat))
 ```
 
-##### Looking for Patterns of Missing Data
+
+
+
+## Histogram and Distribution / ggplot
+
+
 ```{r}
-explanatory = c("Price", "Carat", 
-  "Polish",  
-  "Cut", "Clarity")
-dependent = "Symmetry"
-
-professor.proposes.data %>% 
-  missing_pattern(dependent, explanatory)
+ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point()
 ```
+#### We observe that there are two distinct clusters with low carat (0.09 – 0.30) diamonds having low prices and higher carat diamonds having higher prices. 
 
-## Histogram and Distribution
+
+
+
+
+
 ```{r}
 ggplot(professor.proposes.data, aes(x=Price, fill=Clarity)) + geom_histogram()
 ```
@@ -76,7 +224,7 @@ ggplot(professor.proposes.data, aes(x=Price, fill=Clarity)) + geom_histogram()
 ggplot(professor.proposes.data, aes(x=Price, color=Cut)) + geom_density()
 ```
 
-## Ggplot 
+
 
 ```{r}
 ggplot(professor.proposes.data) + 
@@ -93,10 +241,6 @@ ggplot(data = professor.proposes.data, mapping = aes(x = Cut, y = Price)) +
   geom_boxplot()
 ```
 
-
-```{r}
-ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point()
-```
 ```{r}
 ggplot(data = professor.proposes.data, mapping = aes(x = Carat, y = Price)) + 
   geom_boxplot(mapping = aes(group = cut_width(Carat, 0.1)))
