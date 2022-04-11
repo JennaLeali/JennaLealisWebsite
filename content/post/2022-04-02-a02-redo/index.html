@@ -1832,38 +1832,309 @@ Polish
 ## 1                    1.49       0.71</code></pre>
 </div>
 </div>
+<div id="bivariate-analysis" class="section level2">
+<h2>Bivariate Analysis</h2>
+<div id="price-and-carat-regression" class="section level4">
+<h4>Price and Carat Regression</h4>
+<pre class="r"><code>plot(professor.proposes.data$Price~professor.proposes.data$Carat)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
+<pre class="r"><code>reg &lt;- lm(Price~Carat,professor.proposes.data)
+reg</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Carat, data = professor.proposes.data)
+## 
+## Coefficients:
+## (Intercept)        Carat  
+##      -200.5       2864.7</code></pre>
+<pre class="r"><code>summary(reg)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Carat, data = professor.proposes.data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1705.8  -165.9  -111.9   135.2   994.7 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  -200.48      43.11   -4.65  4.4e-06 ***
+## Carat        2864.73      56.04   51.12  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 446 on 438 degrees of freedom
+## Multiple R-squared:  0.8564, Adjusted R-squared:  0.8561 
+## F-statistic:  2613 on 1 and 438 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>plot(professor.proposes.data$Price~professor.proposes.data$Carat)
+abline(reg)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
+<pre class="r"><code>lm2 &lt;- lm(Price~Carat,data=professor.proposes.data)
+anova(lm2)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: Price
+##            Df    Sum Sq   Mean Sq F value    Pr(&gt;F)    
+## Carat       1 519687583 519687583  2612.8 &lt; 2.2e-16 ***
+## Residuals 438  87117938    198899                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div id="r2-of-10.7-indicates-somewhat-correlation-between-carats-and-price.-the-negative-regression-coefficient-is-surprising.-somehow-heavier-diamonds-are-not-valued-as-much.-we-will-need-to-consider-other-factors-which-can-possibly-explain-lower-prices-for-higher-carat-diamonds.-for-other-variables-we-will-use-dummy-variables." class="section level5">
+<h5>R2 of 10.7% indicates somewhat correlation between carats and price. The negative regression coefficient is surprising. Somehow heavier diamonds are not valued as much. We will need to consider other factors which can possibly explain lower prices for higher carat diamonds. For other variables we will use dummy variables.</h5>
+</div>
+</div>
+<div id="price-and-clarity-regression" class="section level4">
+<h4>Price and Clarity Regression</h4>
+<pre class="r"><code>reg2 &lt;- lm(Price~Clarity,professor.proposes.data)
+reg2</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Clarity, data = professor.proposes.data)
+## 
+## Coefficients:
+## (Intercept)    ClarityI2   ClaritySI1   ClaritySI2   ClaritySI3   ClarityVS1  
+##     2543.15      -201.22     -1495.53      -568.95        76.24     -1405.38  
+##  ClarityVS2  ClarityVVS1  ClarityVVS2  
+##    -1654.95     -1996.15     -1978.95</code></pre>
+<pre class="r"><code>summary(reg2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Clarity, data = professor.proposes.data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2171.2  -571.6  -290.3   582.1  2204.8 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2543.15     107.95  23.558  &lt; 2e-16 ***
+## ClarityI2    -201.22     213.97  -0.940  0.34754    
+## ClaritySI1  -1495.53     141.04 -10.604  &lt; 2e-16 ***
+## ClaritySI2   -568.95     142.62  -3.989 7.79e-05 ***
+## ClaritySI3     76.24     220.02   0.347  0.72913    
+## ClarityVS1  -1405.38     208.58  -6.738 5.17e-11 ***
+## ClarityVS2  -1654.95     186.98  -8.851  &lt; 2e-16 ***
+## ClarityVVS1 -1996.15     699.61  -2.853  0.00454 ** 
+## ClarityVVS2 -1978.95     450.31  -4.395 1.40e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 977.6 on 431 degrees of freedom
+## Multiple R-squared:  0.3213, Adjusted R-squared:  0.3087 
+## F-statistic:  25.5 on 8 and 431 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="regression-with-certification" class="section level4">
+<h4>Regression with Certification</h4>
+<pre class="r"><code>reg3 &lt;- lm(Price~Certification,professor.proposes.data)
+reg3</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Certification, data = professor.proposes.data)
+## 
+## Coefficients:
+##      (Intercept)  CertificationDOW  CertificationEGL  CertificationGIA  
+##           3033.4           -1002.4            -355.6           -1573.6  
+## CertificationIGI  
+##          -2767.9</code></pre>
+<pre class="r"><code>summary(reg3)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Certification, data = professor.proposes.data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1087.82  -912.82   -85.56   461.42  1681.18 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)        3033.4      265.5  11.426  &lt; 2e-16 ***
+## CertificationDOW  -1002.4      957.2  -1.047    0.296    
+## CertificationEGL   -355.6      278.6  -1.277    0.202    
+## CertificationGIA  -1573.6      271.4  -5.797  1.3e-08 ***
+## CertificationIGI  -2767.9      300.3  -9.218  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 919.7 on 435 degrees of freedom
+## Multiple R-squared:  0.3937, Adjusted R-squared:  0.3881 
+## F-statistic:  70.6 on 4 and 435 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="regression-using-cut" class="section level4">
+<h4>Regression using Cut</h4>
+<pre class="r"><code>reg4 &lt;- lm(Price~Cut,professor.proposes.data)
+reg4</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Cut, data = professor.proposes.data)
+## 
+## Coefficients:
+## (Intercept)         CutG         CutI         CutV         CutX  
+##      2455.2       -409.2       -723.5      -1277.1       -797.2</code></pre>
+<pre class="r"><code>summary(reg4)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Cut, data = professor.proposes.data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1987.22 -1111.01   -83.62  1034.23  1912.90 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   2455.2      145.1  16.916  &lt; 2e-16 ***
+## CutG          -409.2      215.5  -1.899 0.058218 .  
+## CutI          -723.5      188.5  -3.839 0.000142 ***
+## CutV         -1277.1      184.1  -6.939 1.44e-11 ***
+## CutX          -797.2      171.5  -4.649 4.43e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1115 on 435 degrees of freedom
+## Multiple R-squared:  0.109,  Adjusted R-squared:  0.1008 
+## F-statistic: 13.31 on 4 and 435 DF,  p-value: 3.072e-10</code></pre>
+</div>
+<div id="regression-using-polish" class="section level4">
+<h4>Regression using Polish</h4>
+<pre class="r"><code>reg5 &lt;- lm(Price~Polish,professor.proposes.data)
+reg5</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Polish, data = professor.proposes.data)
+## 
+## Coefficients:
+## (Intercept)      PolishG      PolishI      Polishv      PolishV      PolishX  
+##      2318.6       -404.0        728.8        762.4       -715.5       -939.8</code></pre>
+<pre class="r"><code>summary(reg5)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Polish, data = professor.proposes.data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1754.6 -1083.1   237.9  1136.9  1758.2 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   2318.6      516.2   4.492 9.07e-06 ***
+## PolishG       -404.0      524.0  -0.771   0.4411    
+## PolishI        728.8      730.0   0.998   0.3187    
+## Polishv        762.4     1264.4   0.603   0.5469    
+## PolishV       -715.5      522.5  -1.369   0.1716    
+## PolishX       -939.8      536.9  -1.750   0.0808 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1154 on 434 degrees of freedom
+## Multiple R-squared:  0.04709,    Adjusted R-squared:  0.03611 
+## F-statistic: 4.289 on 5 and 434 DF,  p-value: 0.0008081</code></pre>
+</div>
+<div id="regression-using-symmetry" class="section level4">
+<h4>Regression using Symmetry</h4>
+<pre class="r"><code>reg6 &lt;- lm(Price~Symmetry,professor.proposes.data)
+reg6</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Symmetry, data = professor.proposes.data)
+## 
+## Coefficients:
+## (Intercept)    SymmetryG    SymmetryI    SymmetryV    SymmetryX  
+##      2432.3       -537.9        615.1       -966.8       -673.0</code></pre>
+<pre class="r"><code>summary(reg6)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Symmetry, data = professor.proposes.data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1734.4  -945.8   115.6  1171.6  1679.5 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   2432.3      249.6   9.744  &lt; 2e-16 ***
+## SymmetryG     -537.9      265.8  -2.024 0.043613 *  
+## SymmetryI      615.1      569.2   1.081 0.280440    
+## SymmetryV     -966.8      262.0  -3.690 0.000253 ***
+## SymmetryX     -673.0      296.6  -2.269 0.023754 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1144 on 435 degrees of freedom
+## Multiple R-squared:  0.06206,    Adjusted R-squared:  0.05343 
+## F-statistic: 7.195 on 4 and 435 DF,  p-value: 1.288e-05</code></pre>
+</div>
+<div id="regression-using-color" class="section level4">
+<h4>Regression using Color</h4>
+<pre class="r"><code>reg7 &lt;- lm(Price~Colour,professor.proposes.data)
+reg7</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Colour, data = professor.proposes.data)
+## 
+## Coefficients:
+## (Intercept)      ColourE      ColourF      ColourG      ColourH      ColourI  
+##     2316.20      -764.29      -982.36      -147.73      -873.92      -765.88  
+##     ColourJ      ColourK      ColourL  
+##     -535.28        42.06        52.30</code></pre>
+<pre class="r"><code>summary(reg7)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Colour, data = professor.proposes.data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2126.2 -1015.2   155.2   970.2  1777.2 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2316.20     253.78   9.127  &lt; 2e-16 ***
+## ColourE      -764.29     297.09  -2.573 0.010427 *  
+## ColourF      -982.36     294.31  -3.338 0.000917 ***
+## ColourG      -147.73     307.19  -0.481 0.630810    
+## ColourH      -873.92     287.31  -3.042 0.002496 ** 
+## ColourI      -765.88     284.10  -2.696 0.007296 ** 
+## ColourJ      -535.28     286.88  -1.866 0.062733 .  
+## ColourK        42.06     325.51   0.129 0.897256    
+## ColourL        52.30     414.43   0.126 0.899634    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1135 on 431 degrees of freedom
+## Multiple R-squared:  0.08507,    Adjusted R-squared:  0.06809 
+## F-statistic: 5.009 on 8 and 431 DF,  p-value: 5.873e-06</code></pre>
+</div>
+</div>
 <div id="histogram-and-distribution-ggplot" class="section level2">
 <h2>Histogram and Distribution / ggplot</h2>
 <pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-35-1.png" width="672" />
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-52-1.png" width="672" />
 #### We observe that there are two distinct clusters with low carat (0.09 – 0.30) diamonds having low prices and higher carat diamonds having higher prices.</p>
 <pre class="r"><code>ggplot(professor.proposes.data, aes(x=Price, fill=Clarity)) + geom_histogram()</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-53-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(professor.proposes.data, aes(x=Price, color=Cut)) + geom_density()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-54-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(professor.proposes.data) + 
   geom_bar(mapping = aes(x = Cut))</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-55-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(data = professor.proposes.data, mapping = aes(x = Price, y = ..density..)) + 
   geom_freqpoly(mapping = aes(colour = Cut), binwidth = 500)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-56-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(data = professor.proposes.data, mapping = aes(x = Cut, y = Price)) +
   geom_boxplot()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(data = professor.proposes.data, mapping = aes(x = Carat, y = Price)) + 
   geom_boxplot(mapping = aes(group = cut_width(Carat, 0.1)))</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-58-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat, color=Clarity, shape=Cut)) + geom_point()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point() + geom_smooth()</code></pre>
 <pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point() + geom_smooth(se=FALSE)</code></pre>
 <pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-61-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat, color=Cut)) + geom_point() + facet_wrap(~ Clarity)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-62-1.png" width="672" /></p>
 </div>
 <div id="linear-model" class="section level2">
 <h2>Linear Model</h2>

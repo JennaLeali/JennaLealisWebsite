@@ -201,6 +201,83 @@ professor.proposes.data %>%
 ```
 
 
+## Bivariate Analysis
+
+
+#### Price and Carat Regression
+```{r}
+plot(professor.proposes.data$Price~professor.proposes.data$Carat)
+```
+```{r}
+reg <- lm(Price~Carat,professor.proposes.data)
+reg
+```
+```{r}
+summary(reg)
+```
+```{r}
+plot(professor.proposes.data$Price~professor.proposes.data$Carat)
+abline(reg)
+```
+```{r}
+lm2 <- lm(Price~Carat,data=professor.proposes.data)
+anova(lm2)
+```
+##### R2  of  10.7%  indicates  somewhat  correlation between  carats  and price. The negative regression coefficient is surprising. Somehow heavier diamonds are not valued as much. We will need to consider other factors which can possibly explain lower prices for higher carat diamonds. For other variables we will use dummy variables.
+
+#### Price and Clarity Regression 
+```{r}
+reg2 <- lm(Price~Clarity,professor.proposes.data)
+reg2
+```
+```{r}
+summary(reg2)
+```
+#### Regression with Certification
+```{r}
+reg3 <- lm(Price~Certification,professor.proposes.data)
+reg3
+```
+```{r}
+summary(reg3)
+```
+#### Regression using Cut
+```{r}
+reg4 <- lm(Price~Cut,professor.proposes.data)
+reg4
+```
+```{r}
+summary(reg4)
+```
+#### Regression using Polish
+```{r}
+reg5 <- lm(Price~Polish,professor.proposes.data)
+reg5
+```
+```{r}
+summary(reg5)
+```
+#### Regression using Symmetry
+```{r}
+reg6 <- lm(Price~Symmetry,professor.proposes.data)
+reg6
+```
+```{r}
+summary(reg6)
+```
+#### Regression using Color
+```{r}
+reg7 <- lm(Price~Colour,professor.proposes.data)
+reg7
+```
+```{r}
+summary(reg7)
+```
+
+
+
+
+
 
 
 ## Histogram and Distribution / ggplot
