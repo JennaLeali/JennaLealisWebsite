@@ -1922,6 +1922,16 @@ reg2</code></pre>
 ## Residual standard error: 977.6 on 431 degrees of freedom
 ## Multiple R-squared:  0.3213, Adjusted R-squared:  0.3087 
 ## F-statistic:  25.5 on 8 and 431 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>lm3 &lt;- lm(Price~Clarity,data=professor.proposes.data)
+anova(lm3)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: Price
+##            Df    Sum Sq  Mean Sq F value    Pr(&gt;F)    
+## Clarity     8 194938677 24367335  25.499 &lt; 2.2e-16 ***
+## Residuals 431 411866844   955608                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
 <div id="regression-with-certification" class="section level4">
 <h4>Regression with Certification</h4>
@@ -1958,6 +1968,16 @@ reg3</code></pre>
 ## Residual standard error: 919.7 on 435 degrees of freedom
 ## Multiple R-squared:  0.3937, Adjusted R-squared:  0.3881 
 ## F-statistic:  70.6 on 4 and 435 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>lm4 &lt;- lm(Price~Certification,data=professor.proposes.data)
+anova(lm4)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: Price
+##                Df    Sum Sq  Mean Sq F value    Pr(&gt;F)    
+## Certification   4 238869617 59717404  70.602 &lt; 2.2e-16 ***
+## Residuals     435 367935903   845830                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
 <div id="regression-using-cut" class="section level4">
 <h4>Regression using Cut</h4>
@@ -1992,6 +2012,16 @@ reg4</code></pre>
 ## Residual standard error: 1115 on 435 degrees of freedom
 ## Multiple R-squared:  0.109,  Adjusted R-squared:  0.1008 
 ## F-statistic: 13.31 on 4 and 435 DF,  p-value: 3.072e-10</code></pre>
+<pre class="r"><code>lm5 &lt;- lm(Price~Cut,data=professor.proposes.data)
+anova(lm5)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: Price
+##            Df    Sum Sq  Mean Sq F value    Pr(&gt;F)    
+## Cut         4  66164570 16541142  13.309 3.072e-10 ***
+## Residuals 435 540640951  1242853                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
 <div id="regression-using-polish" class="section level4">
 <h4>Regression using Polish</h4>
@@ -2027,6 +2057,16 @@ reg5</code></pre>
 ## Residual standard error: 1154 on 434 degrees of freedom
 ## Multiple R-squared:  0.04709,    Adjusted R-squared:  0.03611 
 ## F-statistic: 4.289 on 5 and 434 DF,  p-value: 0.0008081</code></pre>
+<pre class="r"><code>lm6 &lt;- lm(Price~Polish,data=professor.proposes.data)
+anova(lm6)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: Price
+##            Df    Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Polish      5  28574143 5714829  4.2893 0.0008081 ***
+## Residuals 434 578231378 1332330                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
 <div id="regression-using-symmetry" class="section level4">
 <h4>Regression using Symmetry</h4>
@@ -2061,6 +2101,16 @@ reg6</code></pre>
 ## Residual standard error: 1144 on 435 degrees of freedom
 ## Multiple R-squared:  0.06206,    Adjusted R-squared:  0.05343 
 ## F-statistic: 7.195 on 4 and 435 DF,  p-value: 1.288e-05</code></pre>
+<pre class="r"><code>lm7 &lt;- lm(Price~Symmetry,data=professor.proposes.data)
+anova(lm7)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: Price
+##            Df    Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Symmetry    4  37655698 9413925   7.195 1.288e-05 ***
+## Residuals 435 569149823 1308390                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
 <div id="regression-using-color" class="section level4">
 <h4>Regression using Color</h4>
@@ -2101,40 +2151,197 @@ reg7</code></pre>
 ## Residual standard error: 1135 on 431 degrees of freedom
 ## Multiple R-squared:  0.08507,    Adjusted R-squared:  0.06809 
 ## F-statistic: 5.009 on 8 and 431 DF,  p-value: 5.873e-06</code></pre>
+<pre class="r"><code>lm8 &lt;- lm(Price~Colour,data=professor.proposes.data)
+anova(lm8)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: Price
+##            Df    Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Colour      8  51620143 6452518  5.0092 5.873e-06 ***
+## Residuals 431 555185378 1288133                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
 </div>
-<div id="histogram-and-distribution-ggplot" class="section level2">
-<h2>Histogram and Distribution / ggplot</h2>
-<pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-52-1.png" width="672" />
-#### We observe that there are two distinct clusters with low carat (0.09 – 0.30) diamonds having low prices and higher carat diamonds having higher prices.</p>
-<pre class="r"><code>ggplot(professor.proposes.data, aes(x=Price, fill=Clarity)) + geom_histogram()</code></pre>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-53-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(professor.proposes.data, aes(x=Price, color=Cut)) + geom_density()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-54-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(professor.proposes.data) + 
-  geom_bar(mapping = aes(x = Cut))</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-55-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(data = professor.proposes.data, mapping = aes(x = Price, y = ..density..)) + 
-  geom_freqpoly(mapping = aes(colour = Cut), binwidth = 500)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-56-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(data = professor.proposes.data, mapping = aes(x = Cut, y = Price)) +
-  geom_boxplot()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(data = professor.proposes.data, mapping = aes(x = Carat, y = Price)) + 
-  geom_boxplot(mapping = aes(group = cut_width(Carat, 0.1)))</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-58-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat, color=Clarity, shape=Cut)) + geom_point()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point() + geom_smooth()</code></pre>
-<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point() + geom_smooth(se=FALSE)</code></pre>
-<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-61-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(professor.proposes.data, aes(y=Price, x=Carat, color=Cut)) + geom_point() + facet_wrap(~ Clarity)</code></pre>
+<div id="multiple-regression" class="section level2">
+<h2>Multiple Regression</h2>
+<pre class="r"><code>fit &lt;- lm(Price ~ Carat + Clarity + Colour, data=professor.proposes.data)
+summary(fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Carat + Clarity + Colour, data = professor.proposes.data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -960.21 -127.60  -39.59  148.08  820.08 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -1126.05      70.54 -15.963  &lt; 2e-16 ***
+## Carat        3987.49      48.22  82.700  &lt; 2e-16 ***
+## ClarityI2    -586.76      51.33 -11.431  &lt; 2e-16 ***
+## ClaritySI1   1003.21      45.79  21.910  &lt; 2e-16 ***
+## ClaritySI2    850.85      38.07  22.351  &lt; 2e-16 ***
+## ClaritySI3    234.92      53.98   4.352 1.69e-05 ***
+## ClarityVS1   1244.78      61.85  20.127  &lt; 2e-16 ***
+## ClarityVS2   1086.70      57.10  19.031  &lt; 2e-16 ***
+## ClarityVVS1  1484.02     177.48   8.361 9.10e-16 ***
+## ClarityVVS2  1041.82     114.07   9.133  &lt; 2e-16 ***
+## ColourE      -206.27      61.66  -3.345 0.000896 ***
+## ColourF      -315.59      61.24  -5.153 3.94e-07 ***
+## ColourG      -258.45      62.95  -4.106 4.84e-05 ***
+## ColourH      -465.39      60.27  -7.722 8.38e-14 ***
+## ColourI      -518.28      60.12  -8.621  &lt; 2e-16 ***
+## ColourJ      -745.49      61.67 -12.089  &lt; 2e-16 ***
+## ColourK     -1007.22      70.11 -14.367  &lt; 2e-16 ***
+## ColourL     -1137.44      88.15 -12.903  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 231.6 on 422 degrees of freedom
+## Multiple R-squared:  0.9627, Adjusted R-squared:  0.9612 
+## F-statistic: 640.4 on 17 and 422 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>coefficients(fit)</code></pre>
+<pre><code>## (Intercept)       Carat   ClarityI2  ClaritySI1  ClaritySI2  ClaritySI3 
+##  -1126.0455   3987.4897   -586.7603   1003.2084    850.8531    234.9207 
+##  ClarityVS1  ClarityVS2 ClarityVVS1 ClarityVVS2     ColourE     ColourF 
+##   1244.7829   1086.6969   1484.0160   1041.8212   -206.2705   -315.5862 
+##     ColourG     ColourH     ColourI     ColourJ     ColourK     ColourL 
+##   -258.4458   -465.3882   -518.2779   -745.4944  -1007.2174  -1137.4419</code></pre>
+<pre class="r"><code>confint(fit, level=0.95)</code></pre>
+<pre><code>##                  2.5 %     97.5 %
+## (Intercept) -1264.6983 -987.39271
+## Carat        3892.7156 4082.26376
+## ClarityI2    -687.6561 -485.86454
+## ClaritySI1    913.2087 1093.20809
+## ClaritySI2    776.0281  925.67811
+## ClaritySI3    128.8200  341.02136
+## ClarityVS1   1123.2147 1366.35111
+## ClarityVS2    974.4567 1198.93706
+## ClarityVVS1  1135.1543 1832.87766
+## ClarityVVS2   817.6071 1266.03524
+## ColourE      -327.4781  -85.06286
+## ColourF      -435.9621 -195.21029
+## ColourG      -382.1796 -134.71205
+## ColourH      -583.8454 -346.93094
+## ColourI      -636.4463 -400.10954
+## ColourJ      -866.7068 -624.28192
+## ColourK     -1145.0162 -869.41866
+## ColourL     -1310.7183 -964.16554</code></pre>
+<pre class="r"><code>anova(fit)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: Price
+##            Df    Sum Sq   Mean Sq  F value    Pr(&gt;F)    
+## Carat       1 519687583 519687583 9684.554 &lt; 2.2e-16 ***
+## Clarity     8  40309986   5038748   93.899 &lt; 2.2e-16 ***
+## Colour      8  24162803   3020350   56.285 &lt; 2.2e-16 ***
+## Residuals 422  22645148     53661                       
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>layout(matrix(c(1,2,3,4),2,2))
+plot(fit)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-62-1.png" width="672" /></p>
+<div id="compare-models" class="section level4">
+<h4>Compare Models</h4>
+<pre class="r"><code>fit1 &lt;- lm(Price ~ Clarity + Colour + Carat, data=professor.proposes.data)
+fit2 &lt;- lm(Price ~ Certification + Polish, data=professor.proposes.data)
+anova(fit1, fit2)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: Price ~ Clarity + Colour + Carat
+## Model 2: Price ~ Certification + Polish
+##   Res.Df       RSS Df  Sum of Sq      F    Pr(&gt;F)    
+## 1    422  22645148                                   
+## 2    430 359114033 -8 -336468885 783.78 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+</div>
+<div id="resampling-methods" class="section level2">
+<h2>Resampling Methods</h2>
+<div id="loocv" class="section level4">
+<h4>LOOCV</h4>
+<pre class="r"><code>library(boot)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;boot&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:psych&#39;:
+## 
+##     logit</code></pre>
+<pre><code>## The following object is masked from &#39;package:survival&#39;:
+## 
+##     aml</code></pre>
+<pre><code>## The following object is masked from &#39;package:lattice&#39;:
+## 
+##     melanoma</code></pre>
+<pre class="r"><code>glm.fit &lt;- glm(Price ~ Carat, data=professor.proposes.data)
+cv.err &lt;- cv.glm(professor.proposes.data, glm.fit)
+summary(cv.err)</code></pre>
+<pre><code>##       Length Class  Mode   
+## call    3    -none- call   
+## K       1    -none- numeric
+## delta   2    -none- numeric
+## seed  626    -none- numeric</code></pre>
+<pre class="r"><code>cv.err$delta</code></pre>
+<pre><code>## [1] 199764.9 199762.9</code></pre>
+<pre class="r"><code>cv.err &lt;- rep(0, 5)
+system.time(for (i in 1:5) {
+  glm.fit &lt;- glm(Price ~ poly(Carat, i), data=professor.proposes.data)
+  cv.err[i] &lt;- cv.glm(professor.proposes.data, glm.fit)$delta[1]
+})</code></pre>
+<pre><code>##    user  system elapsed 
+##   5.647   0.257   5.923</code></pre>
+<pre class="r"><code>cv.err</code></pre>
+<pre><code>## [1] 199764.94 133447.10 133318.57 107112.07  68360.44</code></pre>
+</div>
+<div id="k-fold" class="section level4">
+<h4>K-Fold</h4>
+<pre class="r"><code>set.seed(17) 
+cv.err &lt;- rep(0, 10)
+
+system.time(for (i in 1:10) {
+  glm.fit &lt;- glm(Price ~ poly(Carat, i), data=professor.proposes.data)
+  cv.err[i] &lt;- cv.glm(professor.proposes.data, glm.fit, K=10)$delta[1]
+})</code></pre>
+<pre><code>##    user  system elapsed 
+##   0.300   0.016   0.316</code></pre>
+<pre class="r"><code>cv.err</code></pre>
+<pre><code>##  [1]  199130.11  135340.26  131372.66  106584.86   68483.30  107450.21
+##  [7]   64431.36  810276.28 1418901.34 4485633.31</code></pre>
+</div>
+<div id="bootstrap" class="section level4">
+<h4>Bootstrap</h4>
+<pre class="r"><code>boot.fn &lt;- function(data, index) {
+  return(coef(lm(Price ~ Carat, data=professor.proposes.data, subset = index)))
+}
+boot.fn(professor.proposes.data, 1:392)</code></pre>
+<pre><code>## (Intercept)       Carat 
+##   -158.7315   2825.3070</code></pre>
+<pre class="r"><code>set.seed(1)
+boot.fn(professor.proposes.data, sample(x=392, size=392, replace = T))</code></pre>
+<pre><code>## (Intercept)       Carat 
+##   -202.1644   2880.2639</code></pre>
+<pre class="r"><code>boot.fn(professor.proposes.data, sample(x=392, size=392, replace = T))</code></pre>
+<pre><code>## (Intercept)       Carat 
+##   -164.7228   2844.1370</code></pre>
+<pre class="r"><code>boot(professor.proposes.data, boot.fn, 1000)</code></pre>
+<pre><code>## 
+## ORDINARY NONPARAMETRIC BOOTSTRAP
+## 
+## 
+## Call:
+## boot(data = professor.proposes.data, statistic = boot.fn, R = 1000)
+## 
+## 
+## Bootstrap Statistics :
+##      original     bias    std. error
+## t1* -200.4836  0.8308544    24.65561
+## t2* 2864.7325 -2.6330454    56.74740</code></pre>
+<pre class="r"><code>summary(lm(Price ~ Carat, data=professor.proposes.data))$coef</code></pre>
+<pre><code>##              Estimate Std. Error   t value      Pr(&gt;|t|)
+## (Intercept) -200.4836   43.11445 -4.650032  4.400356e-06
+## Carat       2864.7325   56.04407 51.115714 1.023668e-186</code></pre>
+</div>
 </div>
 <div id="linear-model" class="section level2">
 <h2>Linear Model</h2>

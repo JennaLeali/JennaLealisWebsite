@@ -35,8 +35,6 @@ head(professor.proposes.data)
 ```
 
 
-
-
 ## Summary of Data
 ```{r}
 summary(professor.proposes.data)
@@ -233,6 +231,10 @@ reg2
 ```{r}
 summary(reg2)
 ```
+```{r}
+lm3 <- lm(Price~Clarity,data=professor.proposes.data)
+anova(lm3)
+```
 #### Regression with Certification
 ```{r}
 reg3 <- lm(Price~Certification,professor.proposes.data)
@@ -240,6 +242,10 @@ reg3
 ```
 ```{r}
 summary(reg3)
+```
+```{r}
+lm4 <- lm(Price~Certification,data=professor.proposes.data)
+anova(lm4)
 ```
 #### Regression using Cut
 ```{r}
@@ -249,6 +255,10 @@ reg4
 ```{r}
 summary(reg4)
 ```
+```{r}
+lm5 <- lm(Price~Cut,data=professor.proposes.data)
+anova(lm5)
+```
 #### Regression using Polish
 ```{r}
 reg5 <- lm(Price~Polish,professor.proposes.data)
@@ -256,6 +266,10 @@ reg5
 ```
 ```{r}
 summary(reg5)
+```
+```{r}
+lm6 <- lm(Price~Polish,data=professor.proposes.data)
+anova(lm6)
 ```
 #### Regression using Symmetry
 ```{r}
@@ -265,6 +279,10 @@ reg6
 ```{r}
 summary(reg6)
 ```
+```{r}
+lm7 <- lm(Price~Symmetry,data=professor.proposes.data)
+anova(lm7)
+```
 #### Regression using Color
 ```{r}
 reg7 <- lm(Price~Colour,professor.proposes.data)
@@ -273,71 +291,97 @@ reg7
 ```{r}
 summary(reg7)
 ```
-
-
-
-
-
-
-
-## Histogram and Distribution / ggplot
-
-
 ```{r}
-ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point()
-```
-#### We observe that there are two distinct clusters with low carat (0.09 – 0.30) diamonds having low prices and higher carat diamonds having higher prices. 
-
-
-
-
-
-
-```{r}
-ggplot(professor.proposes.data, aes(x=Price, fill=Clarity)) + geom_histogram()
+lm8 <- lm(Price~Colour,data=professor.proposes.data)
+anova(lm8)
 ```
 
+## Multiple Regression
 ```{r}
-ggplot(professor.proposes.data, aes(x=Price, color=Cut)) + geom_density()
+fit <- lm(Price ~ Carat + Clarity + Colour, data=professor.proposes.data)
+summary(fit)
+```
+```{r}
+coefficients(fit)
+```
+```{r}
+confint(fit, level=0.95)
+```
+```{r}
+anova(fit)
+```
+```{r}
+layout(matrix(c(1,2,3,4),2,2))
+plot(fit)
+```
+
+#### Compare Models 
+```{r}
+fit1 <- lm(Price ~ Clarity + Colour + Carat, data=professor.proposes.data)
+fit2 <- lm(Price ~ Certification + Polish, data=professor.proposes.data)
+anova(fit1, fit2)
 ```
 
 
-
+## Resampling Methods
+#### LOOCV
 ```{r}
-ggplot(professor.proposes.data) + 
-  geom_bar(mapping = aes(x = Cut))
+library(boot)
+
+glm.fit <- glm(Price ~ Carat, data=professor.proposes.data)
+cv.err <- cv.glm(professor.proposes.data, glm.fit)
+summary(cv.err)
+```
+```{r}
+cv.err$delta
+```
+```{r}
+cv.err <- rep(0, 5)
+system.time(for (i in 1:5) {
+  glm.fit <- glm(Price ~ poly(Carat, i), data=professor.proposes.data)
+  cv.err[i] <- cv.glm(professor.proposes.data, glm.fit)$delta[1]
+})
+```
+```{r}
+cv.err
 ```
 
+#### K-Fold
 ```{r}
-ggplot(data = professor.proposes.data, mapping = aes(x = Price, y = ..density..)) + 
-  geom_freqpoly(mapping = aes(colour = Cut), binwidth = 500)
+set.seed(17) 
+cv.err <- rep(0, 10)
+
+system.time(for (i in 1:10) {
+  glm.fit <- glm(Price ~ poly(Carat, i), data=professor.proposes.data)
+  cv.err[i] <- cv.glm(professor.proposes.data, glm.fit, K=10)$delta[1]
+})
+```
+```{r}
+cv.err
 ```
 
+#### Bootstrap 
 ```{r}
-ggplot(data = professor.proposes.data, mapping = aes(x = Cut, y = Price)) +
-  geom_boxplot()
+boot.fn <- function(data, index) {
+  return(coef(lm(Price ~ Carat, data=professor.proposes.data, subset = index)))
+}
+boot.fn(professor.proposes.data, 1:392)
+```
+```{r}
+set.seed(1)
+boot.fn(professor.proposes.data, sample(x=392, size=392, replace = T))
+```
+```{r}
+boot.fn(professor.proposes.data, sample(x=392, size=392, replace = T))
+```
+```{r}
+boot(professor.proposes.data, boot.fn, 1000)
+```
+```{r}
+summary(lm(Price ~ Carat, data=professor.proposes.data))$coef
 ```
 
-```{r}
-ggplot(data = professor.proposes.data, mapping = aes(x = Carat, y = Price)) + 
-  geom_boxplot(mapping = aes(group = cut_width(Carat, 0.1)))
-```
 
-```{r}
-ggplot(professor.proposes.data, aes(y=Price, x=Carat, color=Clarity, shape=Cut)) + geom_point()
-```
-
-```{r}
-ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point() + geom_smooth()
-```
-
-```{r}
-ggplot(professor.proposes.data, aes(y=Price, x=Carat)) + geom_point() + geom_smooth(se=FALSE)
-```
-
-```{r}
-ggplot(professor.proposes.data, aes(y=Price, x=Carat, color=Cut)) + geom_point() + facet_wrap(~ Clarity)
-```
 
 ## Linear Model 
 
