@@ -12,19 +12,16 @@ tags: []
 
 <div id="library-setup" class="section level1">
 <h1>Library Setup</h1>
-<pre class="r"><code>library(dplyr)</code></pre>
+<pre class="r"><code>suppressPackageStartupMessages(library(&quot;dplyr&quot;))
+suppressPackageStartupMessages(library(&quot;ggplot2&quot;))
+suppressPackageStartupMessages(library(&quot;class&quot;))
+suppressPackageStartupMessages(library(&quot;caret&quot;))
+library(gridExtra)</code></pre>
 <pre><code>## 
-## Attaching package: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## Attaching package: &#39;gridExtra&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
 ## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>library(ggplot2)
-library(class)
-library(caret)</code></pre>
-<pre><code>## Loading required package: lattice</code></pre>
+##     combine</code></pre>
 </div>
 <div id="load-the-data" class="section level1">
 <h1>Load the Data</h1>
@@ -76,6 +73,103 @@ head(survived)</code></pre>
 ## 4         895        0
 ## 5         896        1
 ## 6         897        0</code></pre>
+</div>
+<div id="exploratry-data-analysis" class="section level1">
+<h1>Exploratry Data Analysis</h1>
+<div id="how-many-passangers-survived" class="section level4">
+<h4>How many passangers survived</h4>
+<pre class="r"><code>table(survived$Survived)</code></pre>
+<pre><code>## 
+##   0   1 
+## 266 152</code></pre>
+</div>
+<div id="survived-contains-your-binary-predictions-1-for-survived-0-for-deceased" class="section level4">
+<h4>Survived (contains your binary predictions: 1 for survived, 0 for deceased)</h4>
+</div>
+<div id="passengers-survived" class="section level4">
+<h4>152 passengers survived</h4>
+</div>
+<div id="how-many-men-and-women-passengers-were-there" class="section level4">
+<h4>How many men and women passengers were there?</h4>
+<pre class="r"><code>table(test_data$Sex)</code></pre>
+<pre><code>## 
+## female   male 
+##    152    266</code></pre>
+</div>
+<div id="what-is-the-most-common-ticket-class" class="section level4">
+<h4>What is the most common ticket class</h4>
+<pre class="r"><code>table(test_data$Pclass)</code></pre>
+<pre><code>## 
+##   1   2   3 
+## 107  93 218</code></pre>
+</div>
+<div id="rd-class-tickets-were-the-most-common" class="section level4">
+<h4>3rd class tickets were the most common</h4>
+</div>
+<div id="how-many-passengers-were-not-related-to-another-passenger" class="section level4">
+<h4>How many passengers were not related to another passenger</h4>
+<pre class="r"><code>table(test_data$SibSp)</code></pre>
+<pre><code>## 
+##   0   1   2   3   4   5   8 
+## 283 110  14   4   4   1   2</code></pre>
+</div>
+<div id="passengers-had-no-relation-to-other-passengers" class="section level4">
+<h4>283 passengers had no relation to other passengers</h4>
+</div>
+<div id="visualising-distributions" class="section level2">
+<h2>Visualising distributions</h2>
+<pre class="r"><code>ggplot(data = survived) +
+  geom_bar(mapping = aes(x = Survived))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = test_data) +
+  geom_histogram(mapping = aes(x = Age), binwidth = 0.9)</code></pre>
+<pre><code>## Warning: Removed 86 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = test_data, mapping = aes(x = Age, colour = Sex)) +
+  geom_freqpoly(binwidth = 4)</code></pre>
+<pre><code>## Warning: Removed 86 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = test_data, mapping = aes(x = Pclass, colour = Sex)) +
+  geom_freqpoly(binwidth = 0.1)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>data1 &lt;- 
+  survived %&gt;% 
+  group_by(Survived) 
+data2 &lt;- 
+  test_data %&gt;% 
+  group_by(Age, Fare)
+ggplot() +
+  geom_point(data = data1, aes(x = Survived, y = Survived), color = &quot;blue&quot;) + geom_point(data = data2, aes(x = Age, y = Fare))</code></pre>
+<pre><code>## Warning: Removed 87 rows containing missing values (geom_point).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = test_data, mapping = aes(x = Fare, colour = Age)) +
+  geom_freqpoly(binwidth = 4)</code></pre>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = test_data, mapping = aes(x = Parch, colour = Cabin)) +
+  geom_freqpoly(binwidth = .5)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<div id="bar-plots-of-variables" class="section level4">
+<h4>Bar plots of variables</h4>
+<pre class="r"><code>p1 &lt;- ggplot(test_data, aes(x=Sex)) + ggtitle(&quot;Sex&quot;) + xlab(&quot;Sex&quot;) +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
+p2 &lt;- ggplot(test_data, aes(x=Age)) + ggtitle(&quot;Age&quot;) + xlab(&quot;Age&quot;) + 
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
+p3 &lt;- ggplot(test_data, aes(x=Pclass)) + ggtitle(&quot;Pclass&quot;) + xlab(&quot;Pclass&quot;) + 
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
+p4 &lt;- ggplot(test_data, aes(x=Embarked)) + ggtitle(&quot;Embarked&quot;) + xlab(&quot;Embarked&quot;) +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
+p5 &lt;- ggplot(test_data, aes(x=SibSp)) + ggtitle(&quot;SibSp&quot;) + xlab(&quot;SibSp&quot;) +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
+p6 &lt;- ggplot(test_data, aes(x=Parch)) + ggtitle(&quot;Parch&quot;) + xlab(&quot;Parch&quot;) +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab(&quot;Percentage&quot;) + coord_flip() + theme_dark() + geom_bar(fill = &quot;lightblue&quot;)
+grid.arrange(p1, p2, p3, p4, p5, p6, ncol=3)</code></pre>
+<pre><code>## Warning: Removed 86 rows containing non-finite values (stat_count).
+## Removed 86 rows containing non-finite values (stat_count).</code></pre>
+<pre><code>## Warning: position_stack requires non-overlapping x intervals</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
+</div>
 </div>
 <div id="explore-a-pattern" class="section level1">
 <h1>Explore a pattern</h1>
@@ -245,7 +339,7 @@ summary(m1)</code></pre>
   geom_density(lwd=0.5) +
   labs(title = &quot;Distribution of Probability&quot;) +
   theme_minimal()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 <div id="if-the-probability-is-greater-than-0.5-the-label-will-get-1-survived.-if-the-probability-is-lower-than-0.5-the-label-will-get-0-not-survived." class="section level6">
 <h6>If the probability is greater than 0.5, the label will get 1 (survived). If the probability is lower than 0.5, the label will get 0 (not survived).</h6>
 <pre class="r"><code>data_test$pred_label &lt;- factor(ifelse(data_test$prob &gt; 0.5, 1, 0)) #1 = survived, 0 = not survived

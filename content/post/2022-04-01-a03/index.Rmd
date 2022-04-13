@@ -10,10 +10,11 @@ tags: []
 # Library Setup
 
 ```{r}
-library(dplyr)
-library(ggplot2)
-library(class)
-library(caret)
+suppressPackageStartupMessages(library("dplyr"))
+suppressPackageStartupMessages(library("ggplot2"))
+suppressPackageStartupMessages(library("class"))
+suppressPackageStartupMessages(library("caret"))
+library(gridExtra)
 ```
 
 # Load the Data
@@ -30,8 +31,87 @@ survived = read.csv("https://raw.githubusercontent.com/JennaLeali/JennaLealisWeb
 head(survived)
 ```
 
-# Explore a pattern
+# Exploratry Data Analysis 
+#### How many passangers survived
+```{r}
+table(survived$Survived)
+```
+#### Survived (contains your binary predictions: 1 for survived, 0 for deceased)
+#### 152 passengers survived 
+#### How many men and women passengers were there? 
+```{r}
+table(test_data$Sex)
+```
+#### What is the most common ticket class
+```{r}
+table(test_data$Pclass)
+```
+#### 3rd class tickets were the most common
+#### How many passengers were not related to another passenger
+```{r}
+table(test_data$SibSp)
+```
+#### 283 passengers had no relation to other passengers 
+## Visualising distributions
+```{r}
+ggplot(data = survived) +
+  geom_bar(mapping = aes(x = Survived))
+```
+```{r}
+ggplot(data = test_data) +
+  geom_histogram(mapping = aes(x = Age), binwidth = 0.9)
+```
+```{r}
+ggplot(data = test_data, mapping = aes(x = Age, colour = Sex)) +
+  geom_freqpoly(binwidth = 4)
+```
+```{r}
+ggplot(data = test_data, mapping = aes(x = Pclass, colour = Sex)) +
+  geom_freqpoly(binwidth = 0.1)
+```
 
+```{r}
+data1 <- 
+  survived %>% 
+  group_by(Survived) 
+data2 <- 
+  test_data %>% 
+  group_by(Age, Fare)
+ggplot() +
+  geom_point(data = data1, aes(x = Survived, y = Survived), color = "blue") + geom_point(data = data2, aes(x = Age, y = Fare))
+```
+
+```{r}
+ggplot(data = test_data, mapping = aes(x = Fare, colour = Age)) +
+  geom_freqpoly(binwidth = 4)
+```
+
+```{r}
+ggplot(data = test_data, mapping = aes(x = Parch, colour = Cabin)) +
+  geom_freqpoly(binwidth = .5)
+```
+
+#### Bar plots of variables
+```{r}
+p1 <- ggplot(test_data, aes(x=Sex)) + ggtitle("Sex") + xlab("Sex") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
+p2 <- ggplot(test_data, aes(x=Age)) + ggtitle("Age") + xlab("Age") + 
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
+p3 <- ggplot(test_data, aes(x=Pclass)) + ggtitle("Pclass") + xlab("Pclass") + 
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
+p4 <- ggplot(test_data, aes(x=Embarked)) + ggtitle("Embarked") + xlab("Embarked") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
+p5 <- ggplot(test_data, aes(x=SibSp)) + ggtitle("SibSp") + xlab("SibSp") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
+p6 <- ggplot(test_data, aes(x=Parch)) + ggtitle("Parch") + xlab("Parch") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_dark() + geom_bar(fill = "lightblue")
+grid.arrange(p1, p2, p3, p4, p5, p6, ncol=3)
+```
+
+
+
+
+# Explore a pattern
 ```{r}
 test1 <- cbind(test_data, Survived = survived$Survived)
 ```

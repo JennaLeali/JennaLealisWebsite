@@ -1,0 +1,18 @@
+---
+title: 'A04 '
+author: R package build
+date: '2022-04-10'
+slug: a04
+categories: []
+tags: []
+---
+## Data Visualization
+### What is misleading about the appended visualization and how you might go about fixing it. Follow the guidelines to answer the question.
+#### Create a data frame that can be used to re-construct this visualization. You may need to guess some of the numbers. You can use the tribble() function for this. Tribble is a row-wise readable tibble.
+#### Make a visualization that more accurately tells the story.
+#### What message is more clear in your visualization than it was in the original visualization?
+#### What useful information do these data and your visualization tell us about mask wearing and COVID?
+## 	Data Viz Review
+#### Review any one of the following videos in about 200 words
+## Data Camp Certificate
+#### embed the completion certificate in the solution notebook or knitted webpage
