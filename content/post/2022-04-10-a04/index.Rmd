@@ -6,13 +6,30 @@ slug: a04
 categories: []
 tags: []
 ---
+
+
 ## Data Visualization
 ### What is misleading about the appended visualization and how you might go about fixing it. Follow the guidelines to answer the question.
+
+![Orginal Graph](/Users/jenna/Documents/JennaLealisWebsite/datascienceimagea04.png)
+
 #### Create a data frame that can be used to re-construct this visualization. You may need to guess some of the numbers. You can use the tribble() function for this. Tribble is a row-wise readable tibble.
 #### Make a visualization that more accurately tells the story.
 #### What message is more clear in your visualization than it was in the original visualization?
 #### What useful information do these data and your visualization tell us about mask wearing and COVID?
 ## 	Data Viz Review
+
+
 #### Review any one of the following videos in about 200 words
+<p style="color:darkblue"> Cambridge Analytica whistleblower</p>
+<p style="color:lightblue"> Christopher Wylie, a data scientist who help set up Cambridge Analytica, tells the story of how the company stole personal information in early 2014 to develop a system that profiled individual US voters with the goal of targeting them with personalized political advertisements. Christopher states If you can control all the streams of information around your opponents you can influence how they perceive that battlespace and influence how they will behave and react, and that is exactly what Cambridge Analytica achieved. They combined micro-targeting and new constructs from psychology, so rather than targeting one as a voter, they targeted one as a personality. To scale this formula, they needed to collect lots of data on people so they could personalize the psychological profile of each voter in the US. The company was owned by the hedge fund billionaire Robert Mercer, who invested $15m into Cambridge Analytica. Apps on Facebook were given special permission to harvest data from the person who used the app, as well as, the person’s entire friend network. Cambridge Analytic saw this opportunity as a way to scale data cheaply, efficiently, and quickly, as they would only need a couple of hundred-thousand people to access the whole of America. People whose data was being taken had no idea this was happening. Cambridge Analytica was not just a data science or analytic company, it was a full-service propaganda machine.</p>
+
+
 ## Data Camp Certificate
 #### embed the completion certificate in the solution notebook or knitted webpage
+
+```{r}
+library(knitr)
+```
+
+
