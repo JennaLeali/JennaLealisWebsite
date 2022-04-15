@@ -11,7 +11,9 @@ tags: []
 ## Data Visualization
 ### What is misleading about the appended visualization and how you might go about fixing it. Follow the guidelines to answer the question.
 
-![Orginal Graph](/Users/jenna/Documents/JennaLealisWebsite/datascienceimagea04.png)
+! [Orginal Graph](/Users/jenna/Documents/JennaLealisWebsite/JennaLealisWebsite/content/post/2022-04-10-a04/A04image.png)
+
+ 
 
 #### Create a data frame that can be used to re-construct this visualization. You may need to guess some of the numbers. You can use the tribble() function for this. Tribble is a row-wise readable tibble.
 #### Make a visualization that more accurately tells the story.
