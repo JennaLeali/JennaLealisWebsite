@@ -10,15 +10,78 @@ tags: []
 
 ## Data Visualization
 ### What is misleading about the appended visualization and how you might go about fixing it. Follow the guidelines to answer the question.
+<p style="color:darkblue"> The appended visualization is misleading because the mask axis starts at 15 and goes to 25, while the no mask axis starts at 4 and go to 14. The inconstancy in the axis makes mask wearing appear more efficient that it actually is.</p>
 
 ! [Orginal Graph](/Users/jenna/Documents/JennaLealisWebsite/JennaLealisWebsite/content/post/2022-04-10-a04/A04image.png)
 
  
 
 #### Create a data frame that can be used to re-construct this visualization. You may need to guess some of the numbers. You can use the tribble() function for this. Tribble is a row-wise readable tibble.
+##### Load Library 
+```{r}
+library(tidyverse)
+library(lubridate)
+library(knitr)
+library(ggplot2)
+library(latticeExtra)
+library(dplyr)
+```
+```{r}
+my_formula <- tribble(
+  ~nomask, ~mask, ~Dates,
+  9.5,   23,    "7/13/2020",
+  9.2,   19.5,  "7/14/2020",
+  9.5,   20,    "7/15/2020",
+  9.8,   20,    "7/16/2020",
+  9.7,   19.5,  "7/17/2020",
+  9.6,   20,    "7/18/2020",
+  9,     20,    "7/19/2020",
+  8.5,   20,    "7/20/2020",
+  8.3,   21,    "7/21/2020",
+  8.4,   20.8,  "7/22/2020",
+  8.4,   19.9,  "7/23/2020",
+  9,     20.2,  "7/24/2020",
+  9.9,   19.7,  "7/25/2020",
+  10,    19.3,  "7/26/2020",
+  9.8,   18.6,  "7/27/2020",
+  9.6,   16.8,  "7/28/2020",
+  9.6,   16.6,  "7/29/2020",
+  9.8,   16.7,  "7/30/2020",
+  9.6,   16.2,  "7/31/2020",
+  9,     16,    "8/1/2020",
+  9,     16,    "8/2/2020",
+  9,     16,    "8/3/2020"
+) 
+```
+```{r}
+summary(my_formula)
+```
+```{r}
+str(my_formula)
+```
+
 #### Make a visualization that more accurately tells the story.
+
+```{r}
+dataset <- read.csv("https://raw.githubusercontent.com/JennaLeali/JennaLealisWebsite/main/jennannananandataset.csv")
+dataset
+```
+```{r}
+ggplot(data = dataset, aes(x = X.3, y = X.2)) +
+  geom_point() +
+  labs(x = "Date",
+    y = "mask",
+    title = "Kansas COVID-19 7-Day Rolling Average of Daily Cases/Per 100K Population",
+    subtitle = "Mask Counties Vs. No-Mask Mandate Counties")
+```
+
+
+
 #### What message is more clear in your visualization than it was in the original visualization?
+<p style="color:darkblue"> My visualization shows the COVID-19 7-Day Rolling Average of Daily Cases/Per 100K Population in Kansas in relation  to Mask Counties Vs. No-Mask Mandate Counties more clearly than the orginal graph. The original graph misconstrued the data so it would appear that mask-wearing counties had less COVID-19 cases than no-mask counties. This was a misconception due to the misleading axis. I changed the axis so that they matched and would be more clear to the viewer.</p>
+
 #### What useful information do these data and your visualization tell us about mask wearing and COVID?
+<p style="color:darkblue"> My data and visualization tells us that mask wearing is not as effective as Kansas Department of Health and Environment would like to make it out to be. No-mask counties actually had fewer cases per day than mask-wearing counties.</p> 
 ## 	Data Viz Review
 
 
@@ -30,8 +93,6 @@ tags: []
 ## Data Camp Certificate
 #### embed the completion certificate in the solution notebook or knitted webpage
 
-```{r}
-library(knitr)
-```
+
 
 
